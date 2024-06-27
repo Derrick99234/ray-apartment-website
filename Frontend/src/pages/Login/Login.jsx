@@ -44,17 +44,27 @@ function Login() {
   };
 
   return (
-    <div>
+    <div
+      className="flex h-screen justify-center items-center"
+      style={{
+        backgroundImage: `url(
+          "https://cdn.pixabay.com/photo/2016/09/18/03/28/travel-1677347_640.jpg"
+        )`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        backgroundPosition: "top right",
+      }}
+    >
       <form
         onSubmit={handleLogin}
-        className="bg-slate-50 text-center p-10 w-[500px]"
+        className="bg-white/30 backdrop-blur-sm text-center p-10 w-[500px]"
       >
         <h2 className="font-bold text-3xl mb-5">Welcome Back!</h2>
         <p>Your friends are waiting...</p>
         <input
           type="email"
           name="email"
-          placeholder="Enter your mail address"
+          placeholder="youremail@gmail.com"
           className="w-full py-3 px-4 rounded-lg mb-5 mt-3 border outline-none"
           onChange={(e) => handleChange(e)}
         />
@@ -86,7 +96,7 @@ function Login() {
           <span>or</span>
           <hr className="bg-slate-400" />
         </div>
-        <div className="flex items-center justify-center gap-3 border-2 py-2 rounded-md w-full mb-2 cursor-pointer">
+        <div className="flex items-center justify-center gap-3 bg-white border-2 py-2 rounded-md w-full mb-2 cursor-pointer">
           {/* <FaGoogle /> */}
           <img
             src="https://static-00.iconduck.com/assets.00/google-icon-2048x2048-pks9lbdv.png"
