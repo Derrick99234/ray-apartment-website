@@ -21,6 +21,7 @@ mongoose
   .catch((e) => console.log("Error while trying to connect", e));
 
 app.use("/api/auth", require("./Routes/authRoute"));
+app.use("/api/user", require("./Routes/userRoute"));
 
 app.get("", (req, res) => {
   res.send("Connected to backend successfully");

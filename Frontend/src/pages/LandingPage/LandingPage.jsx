@@ -2,11 +2,35 @@ import { RiCloseLine } from "react-icons/ri";
 import Header from "../../components/Header";
 import { CiFilter } from "react-icons/ci";
 import HotelPostCard from "../../components/HotelPostCard";
+import { useContext, useEffect } from "react";
+import { UserContext } from "../../context/userContext";
+// import { useUser } from "../../hooks/useUser";
 
 function LandingPage() {
+  const token = localStorage.getItem("token");
+  const { userInfo, setUserInfo } = useContext(UserContext);
+  useEffect(() => {
+    const fetchUserDetail = async () => {
+      const res = await fetch("http://localhost:2024/api/user/get", {
+        headers: {
+          "content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+
+      if (!data.error) {
+        setUserInfo(data.user);
+        console.log(data.user);
+      }
+    };
+
+    fetchUserDetail();
+  }, [token, setUserInfo]);
   return (
     <>
-      <Header />
+      <Header user={userInfo} />
       <main className="p-16 pt-20">
         <div className="flex justify-between items-center ">
           <div className="flex justify-between items-center gap-3">

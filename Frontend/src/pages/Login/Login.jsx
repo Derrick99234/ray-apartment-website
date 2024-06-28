@@ -35,6 +35,7 @@ function Login() {
       if (!data.error) {
         setLoading(false);
         navigate("/");
+        localStorage.setItem("token", data.token);
       }
       setLoading(false);
     } catch (e) {
