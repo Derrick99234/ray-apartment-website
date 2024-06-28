@@ -22,9 +22,7 @@ function NavBar({ onClose }) {
           </Link>
         </li>
         <li>
-          <Link to="/login" className="underline text-white">
-            Enlist your hotel
-          </Link>
+          <Link className="underline text-white">Enlist your hotel</Link>
         </li>
         <li>
           <Link to="/login" className="underline text-white">

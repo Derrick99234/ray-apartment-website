@@ -22,7 +22,7 @@ function Login() {
     console.log(formData);
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:5000/api/auth/login", {
+      const res = await fetch("http://localhost:2024/api/auth/login", {
         headers: { "content-Type": "application/json" },
         method: "POST",
         body: JSON.stringify(formData),
@@ -34,7 +34,7 @@ function Login() {
 
       if (!data.error) {
         setLoading(false);
-        navigate("/dashboard");
+        navigate("/");
       }
       setLoading(false);
     } catch (e) {
