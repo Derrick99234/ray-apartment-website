@@ -23,7 +23,7 @@ function Register() {
     console.log(formData);
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:5000/api/auth/signup", {
+      const res = await fetch("http://localhost:2024/api/auth/register", {
         headers: { "content-Type": "application/json" },
         method: "POST",
         body: JSON.stringify(formData),
@@ -60,7 +60,7 @@ function Register() {
         className="bg-white/30 backdrop-blur-sm text-center p-10 max-w-lg"
       >
         <h2 className="font-bold text-3xl mb-5">Ray Apartment!</h2>
-        <p>The best platform for collaboration...</p>
+        <p>NEED A GOOD REST? The best place to enjoy your life</p>
         <input
           type="text"
           placeholder="enter your full name"
@@ -95,6 +95,7 @@ function Register() {
           <input
             type={isPasswordVisible ? "text" : "password"}
             placeholder="re-type your password"
+            name="password2"
             className="w-full py-3 px-4 rounded-lg mb-5 border outline-none"
             onChange={(e) => handleChange(e)}
           />

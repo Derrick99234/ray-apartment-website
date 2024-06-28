@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const register = async (req, res) => {
-  const { username, email, password, name } = req.body;
+  const { username, email, password, displayName } = req.body;
 
   if (!username) {
     res.status(404).json({
@@ -18,7 +18,7 @@ const register = async (req, res) => {
       message: "Username is required for conplete registeration",
     });
   }
-  if (!name) {
+  if (!displayName) {
     res.status(404).json({
       error: true,
       message: "Name is required for conplete registeration",
@@ -35,7 +35,7 @@ const register = async (req, res) => {
     const hashPassword = bcryptjs.hashSync(password, 10);
     const user = await User.create({
       email,
-      displayName: name,
+      displayName,
       username,
       password: hashPassword,
     });
