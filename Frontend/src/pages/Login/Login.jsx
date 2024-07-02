@@ -61,7 +61,7 @@ function Login() {
         className="bg-white/30 backdrop-blur-sm text-center p-10 w-[500px]"
       >
         <h2 className="font-bold text-3xl mb-5">Welcome Back!</h2>
-        <p>Your friends are waiting...</p>
+        <p>list your home today and quickly start earning more income....</p>
         <input
           type="email"
           name="email"
