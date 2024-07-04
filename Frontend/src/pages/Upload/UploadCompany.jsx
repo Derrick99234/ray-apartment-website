@@ -1,27 +1,24 @@
 import { CiLocationOn } from "react-icons/ci";
-import Header from "./components/Header";
-import { useContext, useRef, useState } from "react";
+import Header from "../../components/Header";
+import { useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { RiAddLine, RiCloseLine, RiUploadCloudLine } from "react-icons/ri";
-import { UserContext } from "./context/userContext";
+import { UserContext } from "../../context/userContext";
+import { useNavigate } from "react-router-dom";
 
-function UploadProperty() {
+function UploadCompany() {
   const [currentStep, setCurrentStep] = useState(1);
-  const { userInfo } = useContext(UserContext);
   const [suggestions, setSuggestions] = useState([]);
   const [selectedSuggestion, setSelectedSuggestion] = useState("");
   const [propertyName, setPropertyName] = useState("");
   const [address, setAddress] = useState("");
+  const { userInfo, setUserInfo } = useContext(UserContext);
   const [contactInfo, setContactInfo] = useState({
     phone: "",
     email: "",
     website: "",
   });
   const [detailedDescription, setDetailedDescription] = useState("");
-  //   const [roomTypes, setRoomTypes] = useState([]);
-  //   const [roomType, setRoomType] = useState("");
-  //   const [roomDescription, setRoomDescription] = useState("");
-  //   const [roomRate, setRoomRate] = useState("");
   const [amenities, setAmenities] = useState([]);
   const [policies, setPolicies] = useState({
     checkIn: "",
@@ -40,6 +37,9 @@ function UploadProperty() {
   });
   const [loading, setLoading] = useState(false);
   const [noResults, setNoResults] = useState(false);
+  const [error, setError] = useState("");
+
+  const navigate = useNavigate(null);
 
   const amenitiesRef = useRef();
   const photoRef = useRef();
@@ -149,7 +149,7 @@ function UploadProperty() {
       <button
         className="bg-blue text-white py-2 w-full"
         onClick={handleNextStep}
-        type="submit"
+        type="button"
       >
         Next
       </button>
@@ -205,12 +205,14 @@ function UploadProperty() {
       <button
         className="bg-gray-300 text-black py-2 w-full mb-2"
         onClick={handlePrevStep}
+        type="button"
       >
         Back
       </button>
       <button
         className="bg-blue text-white py-2 w-full"
         onClick={handleNextStep}
+        type="button"
       >
         Next
       </button>
@@ -231,12 +233,14 @@ function UploadProperty() {
       <button
         className="bg-gray-300 text-black py-2 w-full mb-2"
         onClick={handlePrevStep}
+        type="button"
       >
         Back
       </button>
       <button
         className="bg-blue text-white py-2 w-full"
         onClick={handleNextStep}
+        type="button"
       >
         Next
       </button>
@@ -307,20 +311,40 @@ function UploadProperty() {
       <h2 className="font-semibold text-2xl text-slate-900 mb-3">
         Hotel Amenities and Policies
       </h2>
-      <input
-        type="text"
-        value={policies.checkIn}
-        onChange={(e) => setPolicies({ ...policies, checkIn: e.target.value })}
-        className="w-full border py-2 px-4 outline-none my-5"
-        placeholder="Enter check-in time..."
-      />
-      <input
-        type="text"
-        value={policies.checkOut}
-        onChange={(e) => setPolicies({ ...policies, checkOut: e.target.value })}
-        className="w-full border py-2 px-4 outline-none my-5"
-        placeholder="Enter check-out time..."
-      />
+      <div className="relative">
+        <label
+          className="absolute top-7 right-5 text-base font-bold"
+          htmlFor="checkIn"
+        >
+          CHECK IN TIME
+        </label>
+        <input
+          type="time"
+          value={policies.checkIn}
+          onChange={(e) =>
+            setPolicies({ ...policies, checkIn: e.target.value })
+          }
+          className="w-full border py-2 px-4 outline-none my-5"
+          placeholder="Enter check-in time..."
+        />
+      </div>
+      <div className="relative">
+        <label
+          className="absolute top-7 right-5 text-base font-bold"
+          htmlFor="checkOut"
+        >
+          CHECK OUT TIME
+        </label>
+        <input
+          type="time"
+          value={policies.checkOut}
+          onChange={(e) =>
+            setPolicies({ ...policies, checkOut: e.target.value })
+          }
+          className="w-full border py-2 px-4 outline-none my-5"
+          placeholder="Enter check-out time..."
+        />
+      </div>
       <input
         type="text"
         value={policies.cancellation}
@@ -377,21 +401,25 @@ function UploadProperty() {
           className="w-full border py-2 px-4 outline-none my-5"
           placeholder="Enter hotel amenities..."
         />
-        <RiAddLine
-          className="text-3xl text-blue font-bold rounded-md cursor-pointer"
+        <div
+          className="text-2xl px-5 py-2 text-white bg-blue font-bold rounded-md cursor-pointer"
           onClick={() => {
             setAmenities([...amenities, amenitiesRef.current.value]);
             amenitiesRef.current.value = "";
           }}
-        />
+        >
+          ADD
+        </div>
       </div>
       <button
         className="bg-gray-300 text-black py-2 w-full mb-2"
         onClick={handlePrevStep}
+        type="button"
       >
         Back
       </button>
       <button
+        type="button"
         className="bg-blue text-white py-2 w-full"
         onClick={handleNextStep}
       >
@@ -450,12 +478,14 @@ function UploadProperty() {
       )}
 
       <button
+        type="button"
         className="bg-gray-300 text-black py-2 w-full mb-2"
         onClick={handlePrevStep}
       >
         Back
       </button>
       <button
+        type="button"
         className="bg-blue text-white py-2 w-full"
         onClick={handleNextStep}
       >
@@ -490,6 +520,100 @@ function UploadProperty() {
   //       </button>
   //     </>
   //   );
+
+  const token = localStorage.getItem("token");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent the default form submission behavior
+    setError("");
+
+    if (!token) {
+      setError("User not authenticated");
+      return;
+    }
+
+    const formData = new FormData();
+
+    // Append basic information
+    formData.append("location", address);
+    formData.append("companyName", propertyName);
+    formData.append("tel", contactInfo.phone);
+    formData.append("email", contactInfo.email);
+    formData.append("websiteURL", contactInfo.website);
+    formData.append("description", detailedDescription);
+    formData.append("checkInTime", policies.checkIn);
+    formData.append("checkOutTime", policies.checkOut);
+    formData.append("cancellationPolicy", policies.cancellation);
+    formData.append("childPolicy", policies.childPolicy);
+    formData.append("petPolicy", policies.petPolicy);
+    formData.append("hotelAmenities", JSON.stringify(amenities));
+    formData.append("nearByAttractions", nearbyAttractions);
+    formData.append("facebookURL", socialMedia.facebook);
+    formData.append("twitterURL", socialMedia.twitter);
+    formData.append("instaURL", socialMedia.instagram);
+
+    // Append photos
+    photos.forEach((photo, index) => {
+      formData.append(`hotelPictures[${index}]`, photo);
+    });
+
+    console.log(formData);
+
+    try {
+      const response = await fetch(
+        "http://localhost:2024/api/company/create-page",
+        {
+          headers: {
+            "content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+          method: "POST",
+        }
+      );
+
+      if ((await response.json()) == "Unauthorized") {
+        localStorage.removeItem("token");
+        navigate("/login");
+      }
+
+      // Redirect or show success message
+      if (response.status === 200) {
+        navigate("/dashboard");
+      } else {
+        setError("There was an error submitting the form. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error submitting form data:", error);
+      setError("There was an error submitting the form. Please try again.");
+    }
+  };
+
+  useEffect(() => {
+    const fetchUserDetail = async () => {
+      try {
+        const res = await fetch("http://localhost:2024/api/user/get", {
+          headers: {
+            "content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+
+        if (!data.error) {
+          setUserInfo(data.user);
+          console.log(data.user);
+        }
+      } catch (e) {
+        console.log(e);
+        localStorage.removeItem("token");
+        navigate("/login");
+      }
+    };
+
+    fetchUserDetail();
+  }, [token, navigate, setUserInfo]);
 
   const step6Content = (
     <>
@@ -533,15 +657,17 @@ function UploadProperty() {
       <button
         className="bg-gray-300 text-black py-2 w-full mb-2"
         onClick={handlePrevStep}
+        type="button"
       >
         Back
       </button>
-      {/* <button
+      <button
+        type="button"
+        onClick={handleSubmit}
         className="bg-blue text-white py-2 w-full"
-        onClick={handleNextStep}
       >
-        Next
-      </button> */}
+        submit
+      </button>
     </>
   );
 
@@ -562,15 +688,17 @@ function UploadProperty() {
           className={`p-5 shadow-md w-full ${
             currentStep > 1 ? "max-w-[700px]" : "max-w-[500px]"
           }`}
+          onSubmit={(e) => e.preventDefault()}
         >
           <span className="text-slate-400">
             Step {currentStep} of {steps.length}
           </span>
           {steps[currentStep - 1]}
+          {error && <span className="text-red-500 mt-5">{error}</span>}
         </form>
       </main>
     </>
   );
 }
 
-export default UploadProperty;
+export default UploadCompany;
