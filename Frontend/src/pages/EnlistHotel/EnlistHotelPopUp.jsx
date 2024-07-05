@@ -40,9 +40,29 @@ function EnlistHotelPopUp({ onClose }) {
 
           <button
             className="bg-blue py-2 px-5 text-white text-base mt-2"
-            onClick={() => {
+            onClick={async () => {
               if (userInfo && userInfo._id) {
-                return navigate(`/upload/v2/${userInfo._id}`);
+                try {
+                  const token = localStorage.getItem("token");
+                  const res = await fetch(
+                    `http://localhost:2024/api/company/get-company-data/${userInfo.email}`,
+                    {
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                      },
+                    }
+                  );
+                  const data = await res.json();
+
+                  if (data.error) {
+                    return navigate(`/login`);
+                  } else {
+                    return navigate(`/dashboard`);
+                  }
+                } catch (err) {
+                  return navigate(`/upload/v2/${userInfo._id}`);
+                }
               } else {
                 return navigate(`/login`);
               }

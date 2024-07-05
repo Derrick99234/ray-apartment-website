@@ -65,7 +65,7 @@ const login = async (req, res) => {
   if (!passwordMatch)
     return res.status(400).json({ error: "Password is incorrect" });
 
-  const maxAge = 60 * 60 * 24 * 3;
+  const maxAge = 60 * 60 * 2;
 
   const token = jwt.sign({ id: user._id }, process.env.ACCESS_SECRET_TOKEN, {
     expiresIn: maxAge,

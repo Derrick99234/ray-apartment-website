@@ -2,9 +2,11 @@ import { CiLocationOn } from "react-icons/ci";
 import Header from "../../components/Header";
 import { useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { RiAddLine, RiCloseLine, RiUploadCloudLine } from "react-icons/ri";
+import { RiCloseLine, RiUploadCloudLine } from "react-icons/ri";
 import { UserContext } from "../../context/userContext";
 import { useNavigate } from "react-router-dom";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { storage } from "../../firebaseConfig";
 
 function UploadCompany() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -526,58 +528,65 @@ function UploadCompany() {
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent the default form submission behavior
     setError("");
+    setLoading(true);
 
     if (!token) {
       setError("User not authenticated");
       return;
     }
 
-    const formData = new FormData();
-
-    // Append basic information
-    formData.append("location", address);
-    formData.append("companyName", propertyName);
-    formData.append("tel", contactInfo.phone);
-    formData.append("email", contactInfo.email);
-    formData.append("websiteURL", contactInfo.website);
-    formData.append("description", detailedDescription);
-    formData.append("checkInTime", policies.checkIn);
-    formData.append("checkOutTime", policies.checkOut);
-    formData.append("cancellationPolicy", policies.cancellation);
-    formData.append("childPolicy", policies.childPolicy);
-    formData.append("petPolicy", policies.petPolicy);
-    formData.append("hotelAmenities", JSON.stringify(amenities));
-    formData.append("nearByAttractions", nearbyAttractions);
-    formData.append("facebookURL", socialMedia.facebook);
-    formData.append("twitterURL", socialMedia.twitter);
-    formData.append("instaURL", socialMedia.instagram);
-
-    // Append photos
-    photos.forEach((photo, index) => {
-      formData.append(`hotelPictures[${index}]`, photo);
-    });
-
-    console.log(formData);
-
     try {
+      // Upload photos to Firebase and get URLs
+      const uploadedPhotos = await Promise.all(
+        photos.map(async (photo) => {
+          const storageRef = ref(storage, "images/" + photo.name);
+          const snapshot = await uploadBytes(storageRef, photo);
+          const downloadURL = await getDownloadURL(snapshot.ref);
+          return downloadURL;
+        })
+      );
+
+      // Create an object with the form data
+      const companyData = {
+        location: address,
+        companyName: propertyName,
+        tel: contactInfo.phone,
+        email: contactInfo.email,
+        websiteURL: contactInfo.website,
+        description: detailedDescription,
+        checkInTime: policies.checkIn,
+        checkOutTime: policies.checkOut,
+        cancellationPolicy: policies.cancellation,
+        childPolicy: policies.childPolicy,
+        petPolicy: policies.petPolicy,
+        hotelAmenities: amenities,
+        hotelPictureURLs: uploadedPhotos,
+        nearByAttractions: nearbyAttractions,
+        facebookURL: socialMedia.facebook,
+        twitterURL: socialMedia.twitter,
+        instaURL: socialMedia.instagram,
+      };
+
+      // Send form data to the backend
       const response = await fetch(
         "http://localhost:2024/api/company/create-page",
         {
           headers: {
-            "content-Type": "application/json",
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: formData,
+          body: JSON.stringify(companyData),
           method: "POST",
         }
       );
 
-      if ((await response.json()) == "Unauthorized") {
+      const result = await response.json();
+
+      if (result === "Unauthorized") {
         localStorage.removeItem("token");
         navigate("/login");
       }
 
-      // Redirect or show success message
       if (response.status === 200) {
         navigate("/dashboard");
       } else {
@@ -586,6 +595,8 @@ function UploadCompany() {
     } catch (error) {
       console.error("Error submitting form data:", error);
       setError("There was an error submitting the form. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
