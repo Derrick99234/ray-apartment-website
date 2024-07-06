@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import axios from "axios";
 import DashHeader from "../../components/DashHeader";
 import SideBar from "../../components/sideBar";
@@ -8,6 +8,7 @@ import { CompanyContext } from "../../context/companyContext";
 import { LuBedSingle, LuBedDouble, LuSofa } from "react-icons/lu";
 import { GiBunkBeds } from "react-icons/gi";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
+import { RiCloseLine } from "react-icons/ri";
 
 function UploadRooms() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -35,8 +36,12 @@ function UploadRooms() {
   const [bunkBedNumber, setBunkBedNumber] = useState(0);
   const [futonBedNumber, setFutonBedNumber] = useState(0);
 
+  const amenityRef = useRef();
+
   const [moreOption, setMoreOption] = useState(false);
   const { company } = useContext(CompanyContext);
+
+  const [amenities, setAmenities] = useState([...company.hotelAmenities]);
 
   const step1 = (
     <>
@@ -511,9 +516,8 @@ function UploadRooms() {
       </h2>
       <div className="flex gap-5">
         <div className="p-5 border mt-5 w-[652px]">
-          {company &&
-            company.hotelAmenities &&
-            company.hotelAmenities.map((item) => (
+          {amenities &&
+            amenities.map((item) => (
               <>
                 <div className="flex items-center">
                   <input
@@ -534,7 +538,13 @@ function UploadRooms() {
             </h3>
             <p>
               You can{" "}
-              <span className="text-blue" onClick={() => setAddFacility(true)}>
+              <span
+                className="text-blue"
+                onClick={() => {
+                  setAddFacility(true);
+                  setAmenities([...company.hotelAmenities]);
+                }}
+              >
                 add
               </span>{" "}
               more facility
@@ -542,14 +552,47 @@ function UploadRooms() {
           </div>
         </div>
       </div>
+      <div className="flex items-center gap-3 flex-wrap my-3">
+        {amenities.length > 0 &&
+          amenities.map((item, index) => {
+            return (
+              <span
+                key={index}
+                className="px-2 py-[2px] text-sm border rounded-sm flex items-center gap-1"
+              >
+                {item}
+                <RiCloseLine
+                  onClick={() => {
+                    const filteredList = amenities.filter(
+                      (data) => data != item
+                    );
+                    setAmenities(filteredList);
+                  }}
+                  className="cursor-pointer"
+                />
+              </span>
+            );
+          })}
+      </div>
       {addFacility && (
         <>
-          <div className="flex items-center">
+          <div className="flex items-center h-10 gap-3 mt-4">
             <input
               type="text"
-              className="w-full py-2 px-5 border ouline-none"
+              className="w-full py-2 px-5 border ouline-none rounded-sm outline-none"
+              placeholder="Add your hotel facilities vailable for this room"
+              ref={amenityRef}
             />
-            <button className="font-bold text-xl bg-gray-800">+</button>
+            <button
+              className="font-bold text-xl bg-gray-800 w-14 text-white rounded-md h-full"
+              type="button"
+              onClick={() => {
+                setAmenities([...amenities, amenityRef.current.value]);
+                amenityRef.current.value = "";
+              }}
+            >
+              +
+            </button>
           </div>
         </>
       )}
