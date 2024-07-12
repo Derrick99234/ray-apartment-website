@@ -89,4 +89,21 @@ const createRoom = async (req, res) => {
   }
 };
 
-module.exports = { createRoom };
+const readAllRooms = async (req, res) => {
+  try {
+    const room = await Room.find();
+    return res.status(200).json({
+      error: false,
+      room,
+      message: "Room data retrieved successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      error: true,
+      err,
+      message: "an error occured while trying to retrieve company data",
+    });
+  }
+};
+
+module.exports = { createRoom, readAllRooms };
