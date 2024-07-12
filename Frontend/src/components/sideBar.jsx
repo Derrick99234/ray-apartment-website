@@ -45,6 +45,10 @@ function SideBar() {
     getComapanyDetails();
   }, [navigate, setCompany, userInfo]);
 
+  if (!company) {
+    return <p className="p-10 text-center">Loading...</p>;
+  }
+
   return (
     <aside className="w-2/12 bg-gray-900 text-white fixed top-0 bottom-0 left-0 h-screen py-6 flex justify-between flex-col">
       <div>

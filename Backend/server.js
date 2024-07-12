@@ -23,6 +23,7 @@ mongoose
 app.use("/api/auth", require("./Routes/authRoute"));
 app.use("/api/user", require("./Routes/userRoute"));
 app.use("/api/company", require("./Routes/companyRoute"));
+app.use("/api/room", require("./Routes/roomRoute"));
 
 app.get("", (req, res) => {
   res.send("Connected to backend successfully");
