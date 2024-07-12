@@ -1,31 +1,21 @@
 /* eslint-disable react/prop-types */
 import { HiOutlineLocationMarker } from "react-icons/hi";
-function HotelPostCard({
-  hotelType,
-  img,
-  price,
-  roomAvailable,
-  night,
-  person,
-}) {
+function HotelPostCard({ hotelType, img, roomAvailable, location }) {
   return (
-    <div className="bg-gray-50 p-4 rounded-md w-[280px]">
+    <div className="shadow-md rounded-md w-[320px] overflow-hidden pb-4 cursor-pointer">
       <img
         src={img}
         alt="hotel image"
-        className="w-full h-[190px] object-cover"
+        className="w-full h-[190px] object-cover hover:scale-x-110 transition-transform duration-500 hover:mix-blend-multiply hover:bg-black"
       />
-      <div className="flex justify-between items-center p-2">
-        <h2>{hotelType}</h2>
+      <div className="flex justify-between items-center mx-4">
+        <h2 className="font-semibold text-2xl text-black/90">{hotelType}</h2>
+      </div>
+      <div className="flex gap-2 items-center mx-4 my-2">
         <HiOutlineLocationMarker />
+        <span>{location}</span>
       </div>
-      <div className="p-1 flex flex-col gap-2">
-        <strong>${price}</strong>
-        <span>
-          {night} Night, {person} Person
-        </span>
-      </div>
-      <p>Fast filling: {roomAvailable} Room Available</p>
+      <p className="mx-4">Fast filling: {roomAvailable} Room Available</p>
     </div>
   );
 }
