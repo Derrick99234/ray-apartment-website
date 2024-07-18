@@ -18,7 +18,10 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/upload/v2/:id" element={<UploadCompany />} />
         <Route path="/create-room" element={<UploadRooms />} />
-        <Route path="/room-detail/v2/:roomId" element={<RoomDetail />} />
+        <Route
+          path="/room-detail/hotel/:hotelType/:roomId"
+          element={<RoomDetail />}
+        />
       </Routes>
     </>
   );

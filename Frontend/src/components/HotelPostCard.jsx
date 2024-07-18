@@ -1,8 +1,16 @@
 /* eslint-disable react/prop-types */
 import { HiOutlineLocationMarker } from "react-icons/hi";
-function HotelPostCard({ hotelType, img, roomAvailable, location }) {
+import { useNavigate } from "react-router-dom";
+function HotelPostCard({ hotelType, img, roomAvailable, location, id }) {
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate(`room-detail/hotel/${hotelType}/${id}`);
+  };
   return (
-    <div className="shadow-md rounded-md w-[320px] overflow-hidden pb-4 cursor-pointer">
+    <div
+      className="shadow-md rounded-md w-[320px] overflow-hidden pb-4 cursor-pointer"
+      onClick={handleClick}
+    >
       <img
         src={img}
         alt="hotel image"

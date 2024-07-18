@@ -8,7 +8,11 @@ const authenticate = async (req, res, next) => {
   if (!token) return res.status(401).json("You need to login");
 
   jwt.verify(token, process.env.ACCESS_SECRET_TOKEN, (err, decoded) => {
-    if (err) return res.status(403).json("Unauthorized");
+    if (err)
+      return res.status(403).json({
+        error: true,
+        message: "Unauthorized",
+      });
     req.id = decoded;
     next();
   });

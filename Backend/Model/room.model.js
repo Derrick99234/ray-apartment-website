@@ -16,7 +16,9 @@ const roomSchema = new Schema({
   breakfast: { type: Array },
   roomPictures: { type: Array },
   roomPricePerNight: { type: String },
-  company: { type: Schema.Types.ObjectId, ref: "User" },
+  description: { type: String },
+  company: { type: Schema.Types.ObjectId, ref: "CompanyDetail" },
+  
 });
 
 module.exports = mongoose.model("Room", roomSchema);

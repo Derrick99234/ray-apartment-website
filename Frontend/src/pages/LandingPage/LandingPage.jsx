@@ -72,6 +72,7 @@ function LandingPage() {
             room.map((rm, index) => (
               <HotelPostCard
                 key={index}
+                id={rm._id}
                 img={rm.roomPictures[0]}
                 // img="https://cdn.pixabay.com/photo/2015/01/10/11/39/hotel-595121_640.jpg"
                 roomAvailable={rm.numberOfRoom}

@@ -16,6 +16,7 @@ const createRoom = async (req, res) => {
     breakfast,
     roomPictures,
     roomPricePerNight,
+    description,
   } = req.body;
 
   if (!location)
@@ -52,13 +53,21 @@ const createRoom = async (req, res) => {
       error: true,
       message: "Please fill out the required information in step 6",
     });
-  if (!roomPricePerNight)
+  if (!description)
     return res.status(404).json({
       error: true,
       message: "Please fill out the required information in step 7",
     });
+  if (!roomPricePerNight)
+    return res.status(404).json({
+      error: true,
+      message: "Please fill out the required information in step 8",
+    });
 
   try {
+    const userDoc = await User.findOne({ username: req.id });
+    const companyDoc = await User.findOne({ email: userDoc.email });
+
     const room = await Room.create({
       location,
       hotelOfThisType,
@@ -74,6 +83,8 @@ const createRoom = async (req, res) => {
       breakfast,
       roomPictures,
       roomPricePerNight,
+      description,
+      author: companyDoc._id,
     });
     res.status(200).json({
       error: false,
@@ -106,4 +117,22 @@ const readAllRooms = async (req, res) => {
   }
 };
 
-module.exports = { createRoom, readAllRooms };
+const getRoom = async (req, res) => {
+  const { roomId } = req.params;
+  try {
+    const room = await Room.findOne({ _id: roomId });
+    return res.status(200).json({
+      error: false,
+      room,
+      message: "Room data retrieved successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      error: true,
+      err,
+      message: "an error occured while trying to retrieve room data",
+    });
+  }
+};
+
+module.exports = { createRoom, readAllRooms, getRoom };

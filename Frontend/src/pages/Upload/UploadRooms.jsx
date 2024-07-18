@@ -1,3 +1,5 @@
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import { useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import DashHeader from "../../components/DashHeader";
@@ -1072,19 +1074,65 @@ function UploadRooms() {
     </>
   );
 
+  const formats = [
+    "header",
+    "font",
+    "size",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+    "image",
+    "color",
+  ];
+  const [value, setValue] = useState("");
+
   const step7 = (
+    <>
+      <h2 className="text-2xl font-bold mb-3">Description</h2>
+      <ReactQuill
+        value={value}
+        formats={formats}
+        onChange={(newValue) => setValue(newValue)}
+        className="h-[60vh] mb-10"
+      />
+      <div className="flex items-center gap-4 justify-between mt-10">
+        <button
+          type="button"
+          className="bg-gray-300 text-black py-2 w-full"
+          onClick={handlePrevStep}
+        >
+          Back
+        </button>
+        <button
+          type="button"
+          onClick={handleNextStep}
+          className="bg-slate-700 hover:bg-slate-800 text-white py-2 w-full disabled:cursor-not-allowed disabled:bg-slate-400"
+        >
+          Next
+        </button>
+      </div>
+    </>
+  );
+
+  const step8 = (
     <>
       <h2 className="bg-gray-900 py-2 px-4 text-white font-semibold">
         Set the price per night for this room
       </h2>
-      <div className="py-5 px-3  my-4 max-w-md border bg-white shadow-md">
+      <div className="py-5 px-5  my-4 max-w-md border bg-white shadow-md">
         <h3 className="font-semibold ">
           How much do you want to charge per night ?
         </h3>
         <div>
           <label
             htmlFor="pricePerNight"
-            className="mt-4 block text-sm font-semibold"
+            className="mt-4 block text-sm"
           >
             Price guest pay
           </label>
@@ -1167,6 +1215,7 @@ function UploadRooms() {
           serve: breakfast,
           included: breakfastPaid,
         },
+        description: value,
         numberOfGuest: numberOfGuestInRoom,
         isSmokingAllowed,
         roomPictures: uploadedPhotos,
@@ -1192,7 +1241,7 @@ function UploadRooms() {
     }
   };
 
-  const steps = [step1, step2, step3, step4, step5, step6, step7];
+  const steps = [step1, step2, step3, step4, step5, step6, step7, step8];
 
   return (
     <div className="flex">
