@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Navigate, useParams } from "react-router-dom";
-import { HiOutlineLocationMarker } from "react-icons/hi";
+import { Link, Navigate, useParams } from "react-router-dom";
+import { HiArrowLeft, HiOutlineLocationMarker } from "react-icons/hi";
 
 function RoomDetail() {
   const { roomId } = useParams();
@@ -35,6 +35,11 @@ function RoomDetail() {
   }
   return (
     <>
+      <div className="flex items-center justify-end p-4 bg-black">
+        <Link to="/">
+          <HiArrowLeft className="text-2xl cursor-pointer text-white" />
+        </Link>
+      </div>
       {room ? (
         <>
           <main className="p-5">
@@ -59,8 +64,11 @@ function RoomDetail() {
             <h2 className="text-2xl font-semibold mb-3">
               Information about Blue Moon Hotel, VI
             </h2>
-            <div dangerouslySetInnerHTML={{ __html: room.description }}></div>
-            <button className="w-full bg-blue py-3 px-2 text-xl mt-4 text-white">
+            <div
+              dangerouslySetInnerHTML={{ __html: room.description }}
+              className="p-5 max-w-4xl"
+            ></div>
+            <button className="w-56 bg-blue py-2 px-2 text-lg mt-4 text-white">
               Book now
             </button>
           </main>
