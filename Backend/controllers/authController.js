@@ -56,24 +56,33 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await User.findOne({ email });
+  try {
+    const user = await User.findOne({ email });
 
-  if (!user) return res.status(404).json({ error: "Email does not exist" });
+    if (!user)
+      return res
+        .status(404)
+        .json({ error: true, message: "account not exist" });
+    const passwordMatch = await bcryptjs.compare(password, user.password);
 
-  const passwordMatch = await bcryptjs.compare(password, user.password);
+    if (!passwordMatch)
+      return res
+        .status(400)
+        .json({ error: true, message: "Password is incorrect" });
 
-  if (!passwordMatch)
-    return res.status(400).json({ error: "Password is incorrect" });
+    const maxAge = 60 * 60 * 2;
+    const token = jwt.sign({ id: user._id }, process.env.ACCESS_SECRET_TOKEN, {
+      expiresIn: maxAge,
+    });
 
-  const maxAge = 60 * 60 * 2;
-
-  const token = jwt.sign({ id: user._id }, process.env.ACCESS_SECRET_TOKEN, {
-    expiresIn: maxAge,
-  });
-
-  return res
-    .status(200)
-    .json({ error: false, message: "Login successful", user, token });
+    return res
+      .status(200)
+      .json({ error: false, message: "Login successful", user, token });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ error: true, message: "Something went wrong" });
+  }
 };
 
 module.exports = { register, login };

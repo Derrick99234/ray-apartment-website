@@ -1,4 +1,6 @@
 const Room = require("../Model/room.model");
+const Company = require("../Model/companies.model");
+const User = require("../Model/user.model");
 
 const createRoom = async (req, res) => {
   const {
@@ -65,8 +67,22 @@ const createRoom = async (req, res) => {
     });
 
   try {
-    const userDoc = await User.findOne({ username: req.id });
-    const companyDoc = await User.findOne({ email: userDoc.email });
+    const { id } = req.id;
+    const userDoc = await User.findOne({ _id: id });
+    if (!userDoc) {
+      return res.status(400).json({
+        error: true,
+        message: "User not found",
+      });
+    }
+    const companyDoc = await Company.findOne({ companyId: userDoc.email });
+
+    if (!companyDoc) {
+      return res.status(400).json({
+        error: true,
+        message: "Company not found",
+      });
+    }
 
     const room = await Room.create({
       location,
@@ -84,7 +100,7 @@ const createRoom = async (req, res) => {
       roomPictures,
       roomPricePerNight,
       description,
-      author: companyDoc._id,
+      company: companyDoc._id,
     });
     res.status(200).json({
       error: false,
@@ -102,7 +118,7 @@ const createRoom = async (req, res) => {
 
 const readAllRooms = async (req, res) => {
   try {
-    const room = await Room.find();
+    const room = await Room.find().populate("company");
     return res.status(200).json({
       error: false,
       room,
@@ -120,7 +136,7 @@ const readAllRooms = async (req, res) => {
 const getRoom = async (req, res) => {
   const { roomId } = req.params;
   try {
-    const room = await Room.findOne({ _id: roomId });
+    const room = await Room.findOne({ _id: roomId }).populate("company");
     return res.status(200).json({
       error: false,
       room,
@@ -134,5 +150,71 @@ const getRoom = async (req, res) => {
     });
   }
 };
+const GEOAPIFY_API_KEY = "86dd5eb3f5f44a0899e450a627f3d2e3";
 
-module.exports = { createRoom, readAllRooms, getRoom };
+const getAddressFromCoordinates = async (lat, lon) => {
+  try {
+    const response = await fetch(
+      `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lon}&apiKey=${GEOAPIFY_API_KEY}`
+    );
+    const data = await response.json();
+    if (data && data.features && data.features.length > 0) {
+      const properties = data.features[0].properties;
+      const formatted = properties.formatted || "";
+      const city = properties.city || "";
+      const state = properties.state || "";
+      const country = properties.country || "";
+      return { formatted, city, state, country };
+    }
+  } catch (error) {
+    console.error("Error fetching address data", error);
+  }
+  return { formatted: "Unknown location", city: "", state: "", country: "" };
+};
+
+// Mapping of known aliases
+const aliases = {
+  "Federal Capital Territory": "Abuja",
+};
+
+const search = async (req, res) => {
+  const { query } = req.query;
+  console.log(query);
+  try {
+    const rooms = await Room.find();
+    const searchResults = [];
+
+    for (const room of rooms) {
+      const [lat, lon] = room.location;
+      const addressComponents = await getAddressFromCoordinates(lat, lon);
+
+      const { formatted, city, state, country } = addressComponents;
+
+      const searchStrings = [
+        formatted,
+        city,
+        state,
+        country,
+        aliases[state] || "", // Check aliases
+        aliases[city] || "", // Check aliases
+      ].map((str) => str.toLowerCase());
+
+      if (
+        searchStrings.some((str) => str.includes(query.toLowerCase())) ||
+        room.hotelOfThisType.toLowerCase().includes(query.toLowerCase()) ||
+        room.roomName.toLowerCase().includes(query.toLowerCase()) ||
+        room.description.toLowerCase().includes(query.toLowerCase())
+      ) {
+        searchResults.push(room);
+      }
+    }
+
+    res.json(searchResults);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "An error occurred while searching for rooms." });
+  }
+};
+
+module.exports = { createRoom, readAllRooms, getRoom, search };

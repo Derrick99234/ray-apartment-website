@@ -12,7 +12,7 @@ function ProfilePopUp({ user, profileRef }) {
           <Link className="hover:bg-slate-50 p-2" to="/register">
             Profile
           </Link>
-          <Link className="hover:bg-slate-50 p-2 border-t" to="/register">
+          <Link className="hover:bg-slate-50 p-2 border-t" to="/login">
             Log Out
           </Link>
         </>

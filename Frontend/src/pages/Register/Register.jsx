@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { CiLock, CiUnlock } from "react-icons/ci";
+import Toast from "../../components/ToastMessage/Toast";
 
 function Register() {
   const navigate = useNavigate();
@@ -18,6 +19,12 @@ function Register() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const [showToastMsg, setShowToastMsg] = useState({
+    isShown: false,
+    type: "add",
+    message: "",
+  });
+
   const handleLogin = async (e) => {
     e.preventDefault();
     console.log(formData);
@@ -32,16 +39,32 @@ function Register() {
       const data = await res.json();
 
       console.log(data);
-
-      if (!data.error) {
-        setLoading(false);
+      if (data.error) {
+        setShowToastMsg({
+          isShown: true,
+          type: "error",
+          message: data.message,
+        });
+      } else {
+        setShowToastMsg({
+          isShown: true,
+          type: "success",
+          message: data.message,
+        });
+       setTimeout(() => {
         navigate("/login");
+      }, 3000); // Delay for 3 seconds
       }
-      setLoading(false);
     } catch (e) {
       console.log(e);
+      setShowToastMsg({
+        isShown: true,
+        type: "error",
+        message: e.message,
+      });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
   return (
     <div
@@ -140,6 +163,7 @@ function Register() {
           </p>
         </div>
       </form>
+      <Toast setShowToastMsg={setShowToastMsg} showToastMsg={showToastMsg} />
     </div>
   );
 }

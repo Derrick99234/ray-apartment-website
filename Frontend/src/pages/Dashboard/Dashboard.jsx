@@ -17,7 +17,7 @@ function Dashboard() {
             onClick={() => navigate("/create-room")}
           >
             <HiPlus className="text-[4.5rem] rounded-md font-bold" />
-            <span>create post of your property</span>
+            <span>create post of your property... </span>
           </div>
         </main>
       </div>

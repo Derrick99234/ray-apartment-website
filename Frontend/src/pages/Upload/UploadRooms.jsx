@@ -1,11 +1,9 @@
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useContext, useEffect, useRef, useState } from "react";
-import axios from "axios";
 import DashHeader from "../../components/DashHeader";
 import SideBar from "../../components/sideBar";
 import { HiCheckCircle, HiLightBulb } from "react-icons/hi";
-import { CiLocationOn } from "react-icons/ci";
 import { LuBedSingle, LuBedDouble, LuSofa } from "react-icons/lu";
 import { GiBunkBeds } from "react-icons/gi";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
@@ -14,6 +12,8 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/userContext";
+import MyMapComponent from "../../components/MyMapComponent";
+import Toast from "../../components/ToastMessage/Toast";
 
 function UploadRooms() {
   const [company, setCompany] = useState([]);
@@ -22,18 +22,12 @@ function UploadRooms() {
   const [oneProperty, setOneProperty] = useState(false);
   const [multiplyProperty, setMultiplyProperty] = useState(false);
   const [numberOfProperty, setNumberOfProperties] = useState(2);
-  const [suggestions, setSuggestions] = useState([]);
-  const [selectedSuggestion, setSelectedSuggestion] = useState("");
   // const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
-  const [noResults, setNoResults] = useState(false);
-  const [sameLocation, setSameLocation] = useState(true);
   const [error, setError] = useState("");
   const [photos, setPhotos] = useState([]);
 
   const photoRef = useRef();
-
-  const [selectedAmenities, setSelectedAmenities] = useState([]);
 
   const handleNextStep = () => setCurrentStep((prev) => prev + 1);
   const handlePrevStep = () => setCurrentStep((prev) => prev - 1);
@@ -176,49 +170,9 @@ function UploadRooms() {
       </button>
     </>
   );
-
-  const handleInput = async (e) => {
-    const query = e.target.value;
-    setSelectedSuggestion(query);
-    setNoResults(false);
-
-    if (query.length > 2) {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          "https://nominatim.openstreetmap.org/search",
-          {
-            params: {
-              q: query,
-              format: "json",
-              addressdetails: 1,
-              limit: 5,
-            },
-          }
-        );
-
-        if (response.data.length > 0) {
-          setSuggestions(response.data);
-        } else {
-          setNoResults(true);
-        }
-      } catch (error) {
-        console.error("Error fetching location data:", error);
-        setNoResults(true);
-      } finally {
-        setLoading(false);
-      }
-    } else {
-      setSuggestions([]);
-    }
-  };
-
-  const handleSelect = (suggestion) => {
-    setSelectedSuggestion(suggestion.display_name);
-    setLocation(suggestion.display_name);
-    setSuggestions([]);
-    setNoResults(false);
-    setLoading(false);
+  const handlePinLocation = (position) => {
+    setLocation(position);
+    console.log("Pinned location:", location);
   };
 
   const step2 = (
@@ -227,72 +181,14 @@ function UploadRooms() {
         MAKE YOUR PROPERTY VISIBLE BY UPLOADING THEM
       </h2>
       <h3 className="text-xl mt-3">
-        Is it located at {company.location}? (Your property location)
+        Pin your exact location at {company.location}? (Your property location)
       </h3>
-      <div className="my-5">
-        <div>
-          <label htmlFor="yes" className="mr-4">
-            Yes
-          </label>
-          <input
-            type="radio"
-            name="location"
-            // value={company.location}
-            checked={location === company.location}
-            onChange={() => {
-              setLocation(company.location);
-              setSameLocation(true);
-            }}
-          />
-        </div>
-        <div>
-          <label htmlFor="no" className="mr-4">
-            No, somewhere else
-          </label>
-          <input
-            type="radio"
-            name="location"
-            value={selectedSuggestion}
-            checked={location !== company.location}
-            onChange={() => {
-              setLocation(selectedSuggestion);
-              setSameLocation(false);
-            }}
-          />
-        </div>
-      </div>
-      {!sameLocation && (
-        <div className="relative">
-          <input
-            type="text"
-            value={selectedSuggestion}
-            className="w-full border py-2 pl-8 outline-none my-5"
-            placeholder="Enter property name or address..."
-            onChange={handleInput}
-            required
-          />
-          <CiLocationOn className="absolute top-8 left-2 text-xl font-bold" />
-          {loading && <div className="absolute right-2 top-2">Loading...</div>}
-          {noResults && !loading && (
-            <div className="absolute right-2 top-2 text-red-500">
-              No results found
-            </div>
-          )}
-          {suggestions.length > 0 && (
-            <ul className="absolute bg-white border w-full max-h-60 overflow-y-auto">
-              {suggestions.map((suggestion) => (
-                <li
-                  key={suggestion.place_id}
-                  className="p-2 cursor-pointer hover:bg-gray-200"
-                  onClick={() => handleSelect(suggestion)}
-                >
-                  {suggestion.display_name}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
+
+      <MyMapComponent
+        location={company.location}
+        onPinLocation={handlePinLocation}
+      />
+
       <div className="flex items-center gap-4 justify-between mt-10">
         <button
           type="button"
@@ -313,53 +209,38 @@ function UploadRooms() {
     </>
   );
 
-  useEffect(() => {
-    const initialState = amenities.map((amenity) => ({
-      name: amenity,
-      checked: false,
-    }));
-    setSelectedAmenities(initialState);
-  }, [amenities]);
-
-  const handleCheckboxChange = (event) => {
-    const { value, checked } = event.target;
-
-    setSelectedAmenities((prevSelectedAmenities) =>
-      prevSelectedAmenities.map((amenity) =>
-        amenity.name === value ? { ...amenity, checked: checked } : amenity
-      )
-    );
+  const handleCheckboxChange = (e, index) => {
+    const { checked } = e.target;
+    const updatedAmenities = [...amenities];
+    updatedAmenities[index].checked = checked;
+    setAmenities(updatedAmenities);
   };
 
   const step4 = (
     <>
-      <h2 className="text-2xl font-bold">
-        What can guests use at your hotel ?
-      </h2>
+      <h2 className="text-2xl font-bold">What can guests use at your hotel?</h2>
       <div className="flex gap-5">
         <div className="p-5 border mt-5 w-[652px]">
-          {selectedAmenities &&
-            selectedAmenities.map((item) => (
-              <>
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="form-checkbox w-6 h-6 text-slate-800 p-2 border border-gray-300 rounded-md mr-3"
-                    value={item.name}
-                    checked={item.checked}
-                    onChange={handleCheckboxChange}
-                  />
-                  <span className="text-lg">{item.name}</span>
-                </div>
-              </>
+          {amenities &&
+            amenities.map((item, index) => (
+              <div key={index} className="flex items-center">
+                <input
+                  type="checkbox"
+                  className="form-checkbox w-6 h-6 text-slate-800 p-2 border border-gray-300 rounded-md mr-3"
+                  value={item.name}
+                  checked={item.checked}
+                  onChange={(e) => handleCheckboxChange(e, index)}
+                />
+                <span className="text-lg">{item.name}</span>
+              </div>
             ))}
         </div>
         <div className="flex gap-2 max-w-sm border p-5">
           <HiLightBulb className="text-4xl" />
           <div>
             <h3 className="font-semibold text-lg mb-4">
-              This are the hotel amentities you choose at the time of
-              registeration
+              These are the hotel amenities you chose at the time of
+              registration
             </h3>
             <p>
               You can{" "}
@@ -372,54 +253,64 @@ function UploadRooms() {
               >
                 add
               </span>{" "}
-              more facility
+              more facilities
             </p>
           </div>
         </div>
       </div>
       <div className="flex items-center gap-3 flex-wrap my-3">
         {amenities.length > 0 &&
-          amenities.map((item, index) => {
-            return (
-              <span
-                key={index}
-                className="px-2 py-[2px] text-sm border rounded-sm flex items-center gap-1"
-              >
-                {item}
-                <RiCloseLine
-                  onClick={() => {
-                    const filteredList = amenities.filter(
-                      (data) => data != item
-                    );
-                    setAmenities(filteredList);
-                  }}
-                  className="cursor-pointer"
-                />
-              </span>
-            );
-          })}
+          amenities.map((item, index) => (
+            <span
+              key={index}
+              className="px-2 py-[2px] text-sm border rounded-sm flex items-center gap-1"
+            >
+              {item.name}
+              <RiCloseLine
+                onClick={() => {
+                  const filteredList = amenities.filter(
+                    (data) => data.name !== item.name
+                  );
+                  setAmenities(filteredList);
+                }}
+                className="cursor-pointer"
+              />
+            </span>
+          ))}
       </div>
       {addFacility && (
-        <>
-          <div className="flex items-center h-10 gap-3 mt-4">
-            <input
-              type="text"
-              className="w-full py-2 px-5 border ouline-none rounded-sm outline-none"
-              placeholder="Add your hotel facilities vailable for this room"
-              ref={amenityRef}
-            />
-            <button
-              className="font-bold text-xl bg-gray-800 w-14 text-white rounded-md h-full"
-              type="button"
-              onClick={() => {
-                setAmenities([...amenities, amenityRef.current.value]);
+        <div className="flex items-center h-10 gap-3 mt-4">
+          <input
+            type="text"
+            className="w-full py-2 px-5 border rounded-sm outline-none"
+            placeholder="Add your hotel facilities available for this room"
+            ref={amenityRef}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setAmenities([
+                  ...amenities,
+                  { name: amenityRef.current.value, checked: false },
+                ]);
                 amenityRef.current.value = "";
-              }}
-            >
-              +
-            </button>
-          </div>
-        </>
+              }
+            }}
+          />
+          <button
+            className="font-bold text-xl bg-gray-800 w-14 text-white rounded-md h-full"
+            type="button"
+            onClick={() => {
+              if (amenityRef.current.value.trim() !== "") {
+                setAmenities([
+                  ...amenities,
+                  { name: amenityRef.current.value.trim(), checked: false },
+                ]);
+                amenityRef.current.value = "";
+              }
+            }}
+          >
+            +
+          </button>
+        </div>
       )}
       <div className="flex items-center gap-4 justify-between mt-10">
         <button
@@ -431,7 +322,6 @@ function UploadRooms() {
         </button>
         <button
           type="button"
-          disabled={!oneProperty && !multiplyProperty}
           className="bg-slate-700 hover:bg-slate-800 text-white py-2 w-full disabled:cursor-not-allowed disabled:bg-slate-400"
           onClick={handleNextStep}
         >
@@ -786,9 +676,7 @@ function UploadRooms() {
 
   const token = localStorage.getItem("token");
 
-  const [roomData, setRoomData] = useState({
-    hotelOfThisType: oneProperty ? "Single" : "Multiple",
-  });
+  const [roomData, setRoomData] = useState({});
 
   const step3 = (
     <>
@@ -1130,10 +1018,7 @@ function UploadRooms() {
           How much do you want to charge per night ?
         </h3>
         <div>
-          <label
-            htmlFor="pricePerNight"
-            className="mt-4 block text-sm"
-          >
+          <label htmlFor="pricePerNight" className="mt-4 block text-sm">
             Price guest pay
           </label>
           <div className="flex items-center mb-3">
@@ -1170,6 +1055,11 @@ function UploadRooms() {
     </>
   );
 
+  const [showToastMsg, setShowToastMsg] = useState({
+    isShown: false,
+    type: "add",
+    message: "",
+  });
   if (!company) {
     return <p className="p-10 text-center">Loading...</p>;
   }
@@ -1181,6 +1071,7 @@ function UploadRooms() {
 
     if (!token) {
       setError("User not authenticated");
+      setLoading(false);
       return;
     }
 
@@ -1198,6 +1089,7 @@ function UploadRooms() {
       const dataToSend = {
         ...roomData,
         location,
+        hotelOfThisType: oneProperty ? "1" : `${numberOfProperty}`,
         bedAvailable: [
           { type: "Full", count: fullBedNumber },
           { type: "Twin", count: twinBedNumber },
@@ -1207,7 +1099,7 @@ function UploadRooms() {
           { type: "Sofa", count: sofaBedNumber },
           { type: "Futon", count: futonBedNumber },
         ],
-        roomFacility: selectedAmenities,
+        roomFacility: amenities,
         childrenAllowed: childrenPolicy,
         petAllowed: petPolicy,
         parking: [{ parkingPaid, reservation, parkingAmount, parkingDay }],
@@ -1220,6 +1112,9 @@ function UploadRooms() {
         isSmokingAllowed,
         roomPictures: uploadedPhotos,
       };
+
+      console.log("Data to send:", dataToSend);
+
       const response = await fetch(
         "http://localhost:2024/api/room/create-room",
         {
@@ -1231,13 +1126,54 @@ function UploadRooms() {
           method: "POST",
         }
       );
-      // if(response.error) {
-      // }
-      setError(response.message);
-      console.log(response);
-    } catch (e) {
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        console.error("Error response data:", responseData);
+        throw new Error(responseData.message || "Error creating room");
+      }
+
+      const updateResponse = await fetch(
+        `http://localhost:2024/api/company/update-company-data/${company.companyId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ hotelAmenities: dataToSend.roomFacility }),
+          method: "PUT",
+        }
+      );
+
+      const updateResponseData = await updateResponse.json();
+
+      if (!updateResponse.ok) {
+        console.error("Error update response data:", updateResponseData);
+        throw new Error(
+          updateResponseData.message || "Error updating company data"
+        );
+      }
+
+      setShowToastMsg({
+        isShown: true,
+        type: "success",
+        message: "Room uccessfully uploaded",
+      });
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 3000); // Delay for 3 seconds
+
+      setError("");
+      console.log("Room created and company data updated successfully");
+    } catch (error) {
       console.error("Error submitting form data:", error);
-      setError("There was an error submitting the form. Please try again.");
+      setError(
+        error.message ||
+          "There was an error submitting the form. Please try again."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -1256,7 +1192,12 @@ function UploadRooms() {
         </span>
         {steps[currentStep - 1]}
       </form>
-      {error && <span className={`text-red-400`}>{error}</span>}
+      {loading && (
+        <div className="fixed top-0 right-0 bottom-0 bg-black/50">
+          <div className="loader"></div>
+        </div>
+      )}
+      <Toast setShowToastMsg={setShowToastMsg} showToastMsg={showToastMsg} />
     </div>
   );
 }

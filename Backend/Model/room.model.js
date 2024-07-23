@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const roomSchema = new Schema({
-  location: { type: String },
+  location: { type: Array },
   hotelOfThisType: { type: String },
   numberOfRoom: { type: String },
   roomName: { type: String },
@@ -18,7 +18,6 @@ const roomSchema = new Schema({
   roomPricePerNight: { type: String },
   description: { type: String },
   company: { type: Schema.Types.ObjectId, ref: "CompanyDetail" },
-  
 });
 
 module.exports = mongoose.model("Room", roomSchema);

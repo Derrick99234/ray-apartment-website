@@ -29,8 +29,8 @@ function UploadCompany() {
     childPolicy: "",
     petPolicy: "",
   });
+
   const [photos, setPhotos] = useState([]);
-  //   const [bookingInfo, setBookingInfo] = useState("");
   const [nearbyAttractions, setNearbyAttractions] = useState("");
   const [socialMedia, setSocialMedia] = useState({
     facebook: "",
@@ -38,7 +38,6 @@ function UploadCompany() {
     twitter: "",
   });
   const [loading, setLoading] = useState(false);
-  const [noResults, setNoResults] = useState(false);
   const [error, setError] = useState("");
 
   const navigate = useNavigate(null);
@@ -46,36 +45,33 @@ function UploadCompany() {
   const amenitiesRef = useRef();
   const photoRef = useRef();
 
+  const API_KEY = "86dd5eb3f5f44a0899e450a627f3d2e3";
+
   const handleInput = async (e) => {
     const query = e.target.value;
     setSelectedSuggestion(query);
-    setNoResults(false);
 
-    if (query.length > 2) {
-      setLoading(true);
+    if (query.length > 1) {
       try {
         const response = await axios.get(
-          "https://nominatim.openstreetmap.org/search",
+          "https://api.geoapify.com/v1/geocode/search",
           {
             params: {
-              q: query,
-              format: "json",
-              addressdetails: 1,
-              limit: 5,
+              text: query,
+              apiKey: API_KEY,
+              limit: 20,
             },
           }
         );
 
-        if (response.data.length > 0) {
-          setSuggestions(response.data);
+        if (response.data.features.length > 0) {
+          setSuggestions(response.data.features);
         } else {
-          setNoResults(true);
+          setSuggestions([]);
         }
       } catch (error) {
         console.error("Error fetching location data:", error);
-        setNoResults(true);
-      } finally {
-        setLoading(false);
+        setSuggestions([]);
       }
     } else {
       setSuggestions([]);
@@ -83,10 +79,9 @@ function UploadCompany() {
   };
 
   const handleSelect = (suggestion) => {
-    setSelectedSuggestion(suggestion.display_name);
-    setAddress(suggestion.display_name);
+    setSelectedSuggestion(suggestion.properties.formatted);
+    setAddress(suggestion.properties.formatted);
     setSuggestions([]);
-    setNoResults(false);
   };
 
   const handleNextStep = () => {
@@ -128,21 +123,15 @@ function UploadCompany() {
           required
         />
         <CiLocationOn className="absolute top-8 left-2 text-xl font-bold" />
-        {loading && <div className="absolute right-2 top-2">Loading...</div>}
-        {noResults && !loading && (
-          <div className="absolute right-2 top-2 text-red-500">
-            No results found
-          </div>
-        )}
         {suggestions.length > 0 && (
           <ul className="absolute bg-white border w-full mt-1 max-h-60 overflow-y-auto">
             {suggestions.map((suggestion) => (
               <li
-                key={suggestion.place_id}
+                key={suggestion.properties.place_id}
                 className="p-2 cursor-pointer hover:bg-gray-200"
                 onClick={() => handleSelect(suggestion)}
               >
-                {suggestion.display_name}
+                {suggestion.properties.formatted}
               </li>
             ))}
           </ul>
@@ -382,11 +371,11 @@ function UploadCompany() {
                 key={index}
                 className="px-2 py-[2px] text-sm border rounded-sm flex items-center gap-1"
               >
-                {item}
+                {item.name}
                 <RiCloseLine
                   onClick={() => {
                     const filteredList = amenities.filter(
-                      (data) => data != item
+                      (data) => data.name != item.name
                     );
                     setAmenities(filteredList);
                   }}
@@ -396,21 +385,38 @@ function UploadCompany() {
             );
           })}
       </div>
-      <div className="flex items-center gap-5">
-        <input
-          type="text"
-          ref={amenitiesRef}
-          className="w-full border py-2 px-4 outline-none my-5"
-          placeholder="Enter hotel amenities..."
-        />
-        <div
-          className="text-2xl px-5 py-2 text-white bg-blue font-bold rounded-md cursor-pointer"
-          onClick={() => {
-            setAmenities([...amenities, amenitiesRef.current.value]);
-            amenitiesRef.current.value = "";
-          }}
-        >
-          ADD
+      <div>
+        <label htmlFor="" className="mt-5 block mb-1 text-[1rem]">
+          Select the facilities you want to offer in your room or property.
+        </label>
+        <div className="flex items-center gap-5 mb-5">
+          <input
+            type="text"
+            ref={amenitiesRef}
+            className="w-full border py-2 px-4 outline-none"
+            placeholder="resturants..spa..free wifi..."
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setAmenities([
+                  ...amenities,
+                  { name: amenitiesRef.current.value, checked: false },
+                ]);
+                amenitiesRef.current.value = "";
+              }
+            }}
+          />
+          <div
+            className="text-lg px-5 py-2 text-white bg-blue font-bold rounded-md cursor-pointer"
+            onClick={() => {
+              setAmenities([
+                ...amenities,
+                { name: amenitiesRef.current.value.trim(), checked: false },
+              ]);
+              amenitiesRef.current.value = "";
+            }}
+          >
+            ADD
+          </div>
         </div>
       </div>
       <button
@@ -708,6 +714,11 @@ function UploadCompany() {
           {error && <span className="text-red-500 mt-5">{error}</span>}
         </form>
       </main>
+      {loading && (
+        <div className="fixed top-0 right-0 bottom-0 bg-black/50">
+          <div className="loader"></div>
+        </div>
+      )}
     </>
   );
 }

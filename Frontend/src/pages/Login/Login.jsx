@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { CiLock, CiUnlock } from "react-icons/ci";
+import Toast from "../../components/ToastMessage/Toast";
 
 function Login() {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -17,6 +18,12 @@ function Login() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const [showToastMsg, setShowToastMsg] = useState({
+    isShown: false,
+    type: "add",
+    message: "",
+  });
+
   const handleLogin = async (e) => {
     e.preventDefault();
     console.log(formData);
@@ -30,16 +37,32 @@ function Login() {
 
       const data = await res.json();
 
-      console.log(data);
-
-      if (!data.error) {
-        setLoading(false);
+      if (data.error) {
+        setShowToastMsg({
+          isShown: true,
+          type: "error",
+          message: data.message,
+        });
+      } else {
+       setTimeout(() => {
         navigate("/");
+      }, 3000); // Delay for 3 seconds
+        setShowToastMsg({
+          isShown: true,
+          type: "success",
+          message: data.message,
+        });
+        setLoading(false);
         localStorage.setItem("token", data.token);
       }
       setLoading(false);
     } catch (e) {
       console.log(e);
+      setShowToastMsg({
+        isShown: true,
+        type: "error",
+        message: e.message,
+      });
     }
     setLoading(false);
   };
@@ -116,6 +139,7 @@ function Login() {
           <p className="cursor-pointer">Forget Password?</p>
         </div>
       </form>
+      <Toast setShowToastMsg={setShowToastMsg} showToastMsg={showToastMsg} />
     </div>
   );
 }

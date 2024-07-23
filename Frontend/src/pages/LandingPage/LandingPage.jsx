@@ -2,15 +2,27 @@ import { RiCloseLine } from "react-icons/ri";
 import Header from "../../components/Header";
 import { CiFilter } from "react-icons/ci";
 import HotelPostCard from "../../components/HotelPostCard";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../context/userContext";
+import rroom2 from "../../assets/rroom2.jpg";
+import logo2 from "../../assets/color_horizontal.png";
 import { RoomContext } from "../../context/roomContext";
-// import { useUser } from "../../hooks/useUser";
+import Toast from "../../components/ToastMessage/Toast";
+import { CiLocationArrow1 } from "react-icons/ci";
+import { useNavigate } from "react-router-dom";
 
 function LandingPage() {
   const token = localStorage.getItem("token");
   const { userInfo, setUserInfo } = useContext(UserContext);
   const { room, setRoom } = useContext(RoomContext);
+  const [showToastMsg, setShowToastMsg] = useState({
+    isShown: false,
+    type: "add",
+    message: "",
+  });
+
+  const navigate = useNavigate()
+
   useEffect(() => {
     const fetchUserDetail = async () => {
       const res = await fetch("http://localhost:2024/api/user/get", {
@@ -22,6 +34,15 @@ function LandingPage() {
 
       const data = await res.json();
 
+      if (data.error) {
+        setShowToastMsg({
+          isShown: true,
+          type: "error",
+          message: data.message,
+        });
+        return navigate("/login")
+      }
+
       if (!data.error) {
         setUserInfo(data.user);
         console.log(data.user);
@@ -29,7 +50,7 @@ function LandingPage() {
     };
 
     fetchUserDetail();
-  }, [token, setUserInfo]);
+  }, [token, setUserInfo, navigate]);
 
   useEffect(() => {
     const fetchAllRooms = async () => {
@@ -37,12 +58,29 @@ function LandingPage() {
         const res = await fetch("http://localhost:2024/api/room/get-all-rooms");
         const data = await res.json();
 
-        const { room, error } = data;
+        const { room, error, message } = data;
+        if (data.error) {
+          setShowToastMsg({
+            isShown: true,
+            type: "error",
+            message: data.message,
+          });
+        }
         if (!error) {
+          setShowToastMsg({
+            isShown: true,
+            type: "success",
+            message: message,
+          });
           setRoom(room);
         }
       } catch (error) {
         console.log(error);
+        setShowToastMsg({
+          isShown: true,
+          type: "error",
+          message: error.message,
+        });
       }
     };
 
@@ -51,11 +89,77 @@ function LandingPage() {
 
   console.log(room);
 
+  const [query, setQuery] = useState("");
+
+  const handleSearch = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:2024/api/room/search?query=${encodeURIComponent(
+          query
+        )}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const result = await response.json();
+
+      // Ensure the result is an array
+      const roomsArray = Array.isArray(result) ? result : Object.values(result);
+      setRoom(roomsArray);
+    } catch (error) {
+      console.error("Error fetching search results:", error);
+      setRoom([]); // Optional: clear the previous results on error
+    }
+  };
   return (
     <>
       <Header user={userInfo} />
-      <main className="p-16 pt-20 bg-gray-50">
-        <div className="flex justify-between items-center ">
+      <main className="p-16 bg-gray-50">
+        <div
+          style={{
+            background: `url(${rroom2}) no-repeat`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+          className="hero h-[60vh] relative z-10"
+        >
+          <div className="absolute inset-0 bg-black/30 flex flex-col items-center">
+            <img src={logo2} alt="" className="w-96 mx-auto mt-10" />
+            <h2 className="text-center text-white text-3xl mt-3 font-semibold">
+              NEED A PLACE TO LAY LOW NIGHT ?
+            </h2>
+            <button className="bg-yellow-400 py-2 px-20 font-semibold mt-5 text-white text-xl">
+              Book now
+            </button>
+
+            <div className="bg-white p-2 px-4 max-w-4xl w-full mt-14 h-16 flex items-center rounded-xl">
+              <CiLocationArrow1 className="text-4xl" />
+              <input
+                type="text"
+                className="w-full h-full text-xl px-2 outline-none"
+                placeholder="Search for a city or particular hotel"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+              <button
+                className="bg-blue text-lg h-full w-[180px] text-white rounded-xl"
+                onClick={handleSearch}
+              >
+                Search
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-between items-center mt-5">
           <div className="flex justify-between items-center gap-3">
             <span className="flex justify-between items-center px-2 gap-2 py-1 rounded-md border text-sm">
               royal <RiCloseLine />
@@ -65,8 +169,8 @@ function LandingPage() {
             Filter <CiFilter />
           </div>
         </div>
-        <p className="font-bold text-2xl mt-8">Result: 207 hotels found</p>
-        <div className="grid grid-cols-3 gap-5 mt-10 w-4/5 mx-auto">
+        {/* <p className="font-bold text-2xl mt-8">Result: 207 hotels found</p> */}
+        <div className="grid grid-cols-3 gap-8 mt-10 w-4/5 mx-auto">
           {room &&
             room.length > 0 &&
             room.map((rm, index) => (
@@ -76,14 +180,13 @@ function LandingPage() {
                 img={rm.roomPictures[0]}
                 // img="https://cdn.pixabay.com/photo/2015/01/10/11/39/hotel-595121_640.jpg"
                 roomAvailable={rm.numberOfRoom}
-                // person={rm.numberOfGuest}
                 hotelType={rm.roomName}
-                // price={rm.roomPricePerNight}
                 location={rm.location}
               />
             ))}
         </div>
       </main>
+      <Toast setShowToastMsg={setShowToastMsg} showToastMsg={showToastMsg} />
     </>
   );
 }

@@ -44,6 +44,10 @@ function EnlistHotelPopUp({ onClose }) {
               if (userInfo && userInfo._id) {
                 try {
                   const token = localStorage.getItem("token");
+                  if (!token) {
+                    return navigate(`/login`);
+                  }
+
                   const res = await fetch(
                     `http://localhost:2024/api/company/get-company-data/${userInfo.email}`,
                     {
@@ -53,18 +57,24 @@ function EnlistHotelPopUp({ onClose }) {
                       },
                     }
                   );
+
+                  if (!res.ok) {
+                    throw new Error("Failed to fetch company data");
+                  }
+
                   const data = await res.json();
 
                   if (data.error) {
-                    return navigate(`/login`);
+                    navigate(`/login`);
                   } else {
-                    return navigate(`/dashboard`);
+                    navigate(`/dashboard`);
                   }
                 } catch (err) {
-                  return navigate(`/upload/v2/${userInfo._id}`);
+                  console.error(err);
+                  navigate(`/upload/v2/${userInfo._id}`);
                 }
               } else {
-                return navigate(`/login`);
+                navigate(`/login`);
               }
             }}
           >
@@ -73,8 +83,8 @@ function EnlistHotelPopUp({ onClose }) {
         </div>
       </div>
       <RiCloseLine
-        className="absolute top-20 right-10 text-3xl font-bold cursor-pointer"
         onClick={onClose}
+        className="absolute top-20 right-10 text-3xl font-bold cursor-pointer"
       />
     </div>
   );

@@ -31,7 +31,7 @@ function Header({ user }) {
     };
   }, []);
   return (
-    <header className="flex justify-between px-5 py-3 fixed bg-black/90 backdrop-blur-sm w-full text-2xl">
+    <header className="flex justify-between px-5 py-3 fixed bg-black/90 backdrop-blur-sm w-full text-2xl z-50">
       <div className="flex gap-3 items-center text-white">
         <RiMenu2Fill
           className="cursor-pointer"
@@ -59,7 +59,7 @@ function Header({ user }) {
         />
         {showProfile && <ProfilePopUp user={user} profileRef={profileRef} />}
       </div>
-      {showNav && <NavBar onClose={onClose} />}
+      {showNav && <NavBar onClose={onClose} user={user} />}
     </header>
   );
 }
