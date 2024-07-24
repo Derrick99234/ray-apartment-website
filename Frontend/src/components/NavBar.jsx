@@ -16,7 +16,7 @@ function NavBar({ onClose, user }) {
             className="font-bold text-3xl mb-14 text-white"
             onClick={() => onClose()}
           >
-            RAY APARTMENT
+            ROYAL HOMES
           </h2>
           <div onClick={() => onClose()} className="cursor-pointer bg-white">
             <RiCloseLine className="absolute top-10 right-10 text-3xl font-bold cursor-pointer bg-white" />

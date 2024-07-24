@@ -51,9 +51,9 @@ function Register() {
           type: "success",
           message: data.message,
         });
-       setTimeout(() => {
-        navigate("/login");
-      }, 3000); // Delay for 3 seconds
+        setTimeout(() => {
+          navigate("/login");
+        }, 3000); // Delay for 3 seconds
       }
     } catch (e) {
       console.log(e);
@@ -82,7 +82,7 @@ function Register() {
         onSubmit={handleLogin}
         className="bg-white/30 backdrop-blur-sm text-center p-10 max-w-lg"
       >
-        <h2 className="font-bold text-3xl mb-5">Ray Apartment!</h2>
+        <h2 className="font-bold text-3xl mb-5">ROYAL HOMES!</h2>
         <p>NEED A GOOD REST? The best place to enjoy your life</p>
         <input
           type="text"
