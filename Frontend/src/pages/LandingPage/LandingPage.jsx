@@ -6,10 +6,14 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../context/userContext";
 import rroom2 from "../../assets/rroom2.jpg";
 import logo2 from "../../assets/color_horizontal.png";
+import logo from "../../assets/white stacked.png";
 import { RoomContext } from "../../context/roomContext";
 import Toast from "../../components/ToastMessage/Toast";
 import { CiLocationArrow1 } from "react-icons/ci";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { MdOutlineMailLock } from "react-icons/md";
+import { FaXTwitter } from "react-icons/fa6";
+import { FaInstagram, FaFacebook } from "react-icons/fa";
 
 function LandingPage() {
   const token = localStorage.getItem("token");
@@ -21,7 +25,7 @@ function LandingPage() {
     message: "",
   });
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserDetail = async () => {
@@ -40,7 +44,7 @@ function LandingPage() {
           type: "error",
           message: data.message,
         });
-        return navigate("/login")
+        return navigate("/login");
       }
 
       if (!data.error) {
@@ -123,25 +127,29 @@ function LandingPage() {
   return (
     <>
       <Header user={userInfo} />
-      <main className="p-16 bg-gray-50">
+      <main className="p-10 max-[758px]:p-16 max-[430px]:pt-16 bg-gray-50 max-[430px]:p-4">
         <div
           style={{
             background: `url(${rroom2}) no-repeat`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
-          className="hero h-[60vh] relative z-10"
+          className="hero h-[60vh] max-[1024px]:h-[50vh] relative z-10"
         >
           <div className="absolute inset-0 bg-black/30 flex flex-col items-center">
-            <img src={logo2} alt="" className="w-96 mx-auto mt-10" />
-            <h2 className="text-center text-white text-3xl mt-3 font-semibold">
+            <img
+              src={logo2}
+              alt=""
+              className="w-96 mx-auto mt-10 max-[430px]:w-80"
+            />
+            <h2 className="text-center text-white text-3xl mt-3 max-[430px]:text-2xl font-semibold">
               NEED A PLACE TO LAY LOW NIGHT ?
             </h2>
             <button className="bg-yellow-400 py-2 px-20 font-semibold mt-5 text-white text-xl">
               Book now
             </button>
 
-            <div className="bg-white p-2 px-4 max-w-4xl w-full mt-14 h-16 flex items-center rounded-xl">
+            <div className="bg-white p-2 px-4 max-w-4xl max-[800px]:w-[90%] w-full mt-14 h-16 flex items-center rounded-xl">
               <CiLocationArrow1 className="text-4xl" />
               <input
                 type="text"
@@ -170,7 +178,7 @@ function LandingPage() {
           </div>
         </div>
         {/* <p className="font-bold text-2xl mt-8">Result: 207 hotels found</p> */}
-        <div className="grid grid-cols-3 gap-8 mt-10 w-4/5 mx-auto">
+        <div className="grid grid-cols-3 max-[768px]:grid-cols-2 max-[430px]:grid-cols-1 gap-8 mt-10 max-[1280px]:w-[90%] w-4/5 max-[1024px]:w-full place-items-center  mx-auto">
           {room &&
             room.length > 0 &&
             room.map((rm, index) => (
@@ -185,7 +193,66 @@ function LandingPage() {
               />
             ))}
         </div>
+        <div className="flex items-center mt-24 max-[430px]:flex-col bg-blue w-full p-5 text-white rounded-md justify-between">
+          <div className="flex items-center gap-3">
+            <MdOutlineMailLock className="text-2xl" />
+            <div className="max-[430px]:mb-3">
+              <h2 className="text-lg font-semibold max-[768px]:text-base">
+                Enter your email address to unlock hotel deals
+              </h2>
+              <p className="max-[768px]:text-sm">
+                Sign up to start receiving exclusive offers
+              </p>
+            </div>
+          </div>
+          <div className="flex h-[40px] rounded-md overflow-hidden">
+            <input
+              type="email"
+              className="w-full h-full bg-white p-2 text-[#333]"
+              placeholder="Email your email address"
+            />
+            <button className="bg-yellow-500 h-full w-[180px]">unlock</button>
+          </div>
+        </div>
       </main>
+      <footer className="p-5 py-8 max-[768px]:px-10 bg-black flex items-center gap-4 flex-col text-white">
+        <div className="grid grid-cols-5 max-[768px]:grid-cols-2 max-[430px]:grid-cols-1 gap-10 w-full">
+          <img src={logo} alt="" className="w-64" />
+          <div className="flex flex-col gap-3 min-w-[250px]">
+            <h2 className="font-semibold text-2xl">Company</h2>
+            <Link>About Us</Link>
+            <Link>Privacy Policy</Link>
+            <Link>Term of service</Link>
+          </div>
+          <div className="flex flex-col gap-3 min-w-[250px]">
+            <h2 className="font-semibold text-2xl">Communities</h2>
+            <Link>Twitter</Link>
+            <Link>Instagram</Link>
+            <Link>Facebook</Link>
+          </div>
+          <div className="flex flex-col gap-3 min-w-[250px]">
+            <h2 className="font-semibold text-2xl">Top Destination</h2>
+            <Link>Abuja</Link>
+            <Link>Lagos</Link>
+            <Link>LA</Link>
+          </div>
+          <div className="flex flex-col gap-3 min-w-[250px]">
+            <h2 className="font-semibold text-2xl">Top Hotels</h2>
+            <Link>Deritech Hotel</Link>
+            <Link>YJ Homes</Link>
+            <Link>ChitraResort</Link>
+          </div>
+        </div>
+        <hr className="bg-white h-[2px] mt-3 w-full" />
+        <p className="flex items-center gap-4">
+          <span>
+            Copyright © 2024 Hotel Booking Limited All Rights Reserved
+          </span>
+          <FaXTwitter className="text-white" />
+          <FaInstagram className="text-white" />
+          <FaFacebook className="text-white" />
+        </p>
+      </footer>
       <Toast setShowToastMsg={setShowToastMsg} showToastMsg={showToastMsg} />
     </>
   );

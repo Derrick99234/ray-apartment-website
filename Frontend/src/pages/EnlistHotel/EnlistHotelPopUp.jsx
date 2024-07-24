@@ -12,10 +12,10 @@ function EnlistHotelPopUp({ onClose }) {
       <div className="bg-white h-[90vh] flex justify-end absolute bottom-0 w-full left-0 right-0 rounded-t-3xl overflow-hidden">
         <img
           src="https://cdn.pixabay.com/photo/2020/05/09/09/13/house-5148865_640.jpg"
-          className="w-1/2 h-[800px] rounded-3xl absolute top-[0] left-[0] object-fill"
+          className="w-1/2 h-[800px] rounded-3xl absolute top-[0] left-[0] object-fill max-[430px]:hidden"
           alt=""
         />
-        <div className=" w-1/2 p-10">
+        <div className=" w-1/2 p-10 max-[430px]:w-full">
           <h2 className="text-2xl font-bold ">RAY APARTMENT</h2>
           <p className="text-base my-3">
             For over 25 years, we’ve learned what travelers seek, what makes
@@ -84,7 +84,7 @@ function EnlistHotelPopUp({ onClose }) {
       </div>
       <RiCloseLine
         onClick={onClose}
-        className="absolute top-20 right-10 text-3xl font-bold cursor-pointer"
+        className="absolute top-20 right-10 max-[430px]:top-24 text-3xl font-bold cursor-pointer"
       />
     </div>
   );

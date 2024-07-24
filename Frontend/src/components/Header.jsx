@@ -37,7 +37,7 @@ function Header({ user }) {
           className="cursor-pointer"
           onClick={() => setShowNav(true)}
         />
-        <h2 className="font-bold text-xl">RAY APARTMENT</h2>
+        <h2 className="font-bold text-xl">ROYAL HOMES</h2>
       </div>
       {/* <div className="relative">
         <input
@@ -48,7 +48,7 @@ function Header({ user }) {
         <FiSearch className="cursor-pointer absolute top-2 right-3 text-white" />
       </div> */}
       <div className="relative flex items-center gap-2">
-        <p className="text-white text-xl">
+        <p className="text-white text-xl max-[430px]:hidden">
           {user && user.displayName ? user.displayName : "Anonymous"}
         </p>
         <img
