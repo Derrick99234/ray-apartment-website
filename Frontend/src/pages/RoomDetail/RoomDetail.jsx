@@ -15,6 +15,7 @@ function RoomDetail() {
   const [redirect, setRedirect] = useState(false);
   const [location, setLocation] = useState([]);
   const address = useReverseGeocoding(location[0], location[1]);
+  const [activeView, setActiveView] = useState(0);
 
   useEffect(() => {
     const getRoom = async () => {
@@ -64,6 +65,26 @@ function RoomDetail() {
     return <Navigate to="/login" />;
   }
 
+  // const priceInfo = (
+  //   <>
+  //     <h2>Price info</h2>
+  //   </>
+  // );
+
+  // const facilities = (
+  //   <>
+  //     <h2>Facilities</h2>
+  //   </>
+  // );
+
+  // const houseRule = (
+  //   <>
+  //     <h2>House Rule</h2>
+  //   </>
+  // );
+
+  // const views = [overview, priceInfo, facilities, houseRule];
+
   return (
     <>
       <div className="flex items-center justify-end p-4 bg-black">
@@ -107,16 +128,97 @@ function RoomDetail() {
                 <HiChevronRight size={30} />
               </button>
             </div>
-            <h2 className="text-2xl font-semibold mb-3">
-              Information about {room.company?.companyName}
-            </h2>
-            <div
-              dangerouslySetInnerHTML={{ __html: room.description }}
-              className="p-5 max-w-4xl"
-            ></div>
-            <button className="w-56 bg-blue py-2 px-2 text-lg mt-4 text-white">
-              Book now
-            </button>
+            <div className="flex iitems-center justify-center my-5">
+              <a
+                href="#overview"
+                className={`py-3 px-20 text-sm border-b-2 border-b-gray-100 hover:border-b-blue hover:bg-gray-100 ${
+                  activeView === 0 && "border-b-blue"
+                }`}
+                onClick={() => setActiveView(0)}
+              >
+                Overview
+              </a>
+              <a
+                href="#priceInfo"
+                className={`py-3 px-20 text-sm border-b-2 border-b-gray-100 hover:border-b-blue hover:bg-gray-100 ${
+                  activeView === 1 && "border-b-blue"
+                }`}
+                onClick={() => setActiveView(1)}
+              >
+                Info & price
+              </a>
+              <a
+                href="#facilities"
+                className={`py-3 px-20 text-sm border-b-2 border-b-gray-100 hover:border-b-blue hover:bg-gray-100 ${
+                  activeView === 2 && "border-b-blue"
+                }`}
+                onClick={() => setActiveView(2)}
+              >
+                Facilities
+              </a>
+              <a
+                href="#houseRule"
+                className={`py-3 px-20 text-sm border-b-2 border-b-gray-100 hover:border-b-blue hover:bg-gray-100 ${
+                  activeView === 3 && "border-b-blue"
+                }`}
+                onClick={() => setActiveView(3)}
+              >
+                House Rules
+              </a>
+            </div>
+            <section id="overview">
+              <h2 className="text-2xl font-semibold mb-3">
+                Information about {room && room.company?.companyName}
+              </h2>
+              <div
+                dangerouslySetInnerHTML={{ __html: room && room.description }}
+                className="p-5 max-w-4xl"
+              ></div>
+              <button className="w-56 bg-blue py-2 px-2 text-lg mt-4 text-white">
+                Book now
+              </button>
+            </section>
+            <section id="facilities">
+              <h2 className="text-2xl font-semibold my-4">
+                Facilities availableble at {room && room.company?.companyName}
+              </h2>
+              <ul className="flex flex-wrap items-center gap-3 my-3 max-w-3xl ml-4">
+                {room.company &&
+                  room.company.hotelAmenities.map((facility, index) => {
+                    return (
+                      <>
+                        <li
+                          key={index}
+                          className="bg-slate-100 py-2 px-14 rounded-md text-sm text-slate-800 font-semibold"
+                        >
+                          {facility.name}
+                        </li>
+                      </>
+                    );
+                  })}
+              </ul>
+            </section>
+            <section id="houseRule">
+              <h2 className="text-2xl font-semibold my-4">House Rule</h2>
+              <div className="mt-5 border p-4 grid grid-cols-[20%,1fr] max-w-4xl gap-4">
+                <h2 className="font-bold">Check-in time</h2>
+                <p>From {room.company && room.company.checkInTime}</p>
+                <h2 className="font-bold">Check-out time</h2>
+                <p>Until {room.company && room.company.checkOutTime}</p>
+                <h2 className="font-bold">Child policy</h2>
+                <p>{room.company && room.company.childPolicy}</p>
+                <h2 className="font-bold">Cancellation Policy</h2>
+                <p>{room.company && room.company.cancellationPolicy}</p>
+                <h2 className="font-bold">Pet Policy</h2>
+                <p>{room.company && room.company.petPolicy}</p>
+                <h2 className="font-bold">Facebook page</h2>
+                <p>{room.company && room.company.facebookURL}</p>
+                <h2 className="font-bold">Instagram page</h2>
+                <p>{room.company && room.company.instaURL}</p>
+                <h2 className="font-bold">Twitter page</h2>
+                <p>{room.company && room.company.twitterURL}</p>
+              </div>
+            </section>
           </main>
         </>
       ) : (
