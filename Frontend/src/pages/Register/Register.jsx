@@ -30,7 +30,7 @@ function Register() {
     console.log(formData);
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:2024/api/auth/register", {
+      const res = await fetch("https://ray-apartment-website.onrender.com/api/auth/register", {
         headers: { "content-Type": "application/json" },
         method: "POST",
         body: JSON.stringify(formData),

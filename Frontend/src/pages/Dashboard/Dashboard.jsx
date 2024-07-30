@@ -14,12 +14,15 @@ function Dashboard() {
 
   useEffect(() => {
     const fetchUserDetail = async () => {
-      const res = await fetch("http://localhost:2024/api/user/get", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        "https://ray-apartment-website.onrender.com/api/user/get",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       const data = await res.json();
       setUser(data.user);
       console.log(data.user.email);
@@ -31,7 +34,7 @@ function Dashboard() {
   useEffect(() => {
     const fetchRooms = async () => {
       const response = await fetch(
-        "http://localhost:2024/api/room/get-all-rooms"
+        "https://ray-apartment-website.onrender.com/api/room/get-all-rooms"
       );
       const data = await response.json();
       const arr = data.room;
@@ -119,7 +122,9 @@ function Dashboard() {
                         </h3>
                         <p className="flex gap-2 items-center">
                           <HiOutlineLocationMarker />
-                          {address[index].length > 20
+                          {address &&
+                          address[index] &&
+                          address[index].length > 20
                             ? `${address[index]}...`
                             : address[index]}
                         </p>

@@ -23,7 +23,7 @@ function SideBar() {
           return navigate("/login");
         }
         const response = await fetch(
-          `http://localhost:2024/api/company/get-company-data/${userInfo.email}`,
+          `https://ray-apartment-website.onrender.com/api/company/get-company-data/${userInfo.email}`,
           {
             headers: {
               "content-Type": "'application/json",

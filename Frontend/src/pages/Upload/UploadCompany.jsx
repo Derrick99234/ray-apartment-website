@@ -575,7 +575,7 @@ function UploadCompany() {
 
       // Send form data to the backend
       const response = await fetch(
-        "http://localhost:2024/api/company/create-page",
+        "https://ray-apartment-website.onrender.com/api/company/create-page",
         {
           headers: {
             "Content-Type": "application/json",
@@ -606,7 +606,7 @@ function UploadCompany() {
     }
   };
 
-  useEffect(() => {
+  useEffect(() => https://ray-apartment-website.onrender.com/
     const fetchUserDetail = async () => {
       try {
         const res = await fetch("http://localhost:2024/api/user/get", {

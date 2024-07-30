@@ -29,11 +29,14 @@ function Login() {
     console.log(formData);
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:2024/api/auth/login", {
-        headers: { "content-Type": "application/json" },
-        method: "POST",
-        body: JSON.stringify(formData),
-      });
+      const res = await fetch(
+        "https://ray-apartment-website.onrender.com/api/auth/login",
+        {
+          headers: { "content-Type": "application/json" },
+          method: "POST",
+          body: JSON.stringify(formData),
+        }
+      );
 
       const data = await res.json();
 
@@ -44,9 +47,9 @@ function Login() {
           message: data.message,
         });
       } else {
-       setTimeout(() => {
-        navigate("/");
-      }, 3000); // Delay for 3 seconds
+        setTimeout(() => {
+          navigate("/");
+        }, 3000); // Delay for 3 seconds
         setShowToastMsg({
           isShown: true,
           type: "success",

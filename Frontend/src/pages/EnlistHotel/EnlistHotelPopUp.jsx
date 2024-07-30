@@ -49,7 +49,7 @@ function EnlistHotelPopUp({ onClose }) {
                   }
 
                   const res = await fetch(
-                    `http://localhost:2024/api/company/get-company-data/${userInfo.email}`,
+                    `https://ray-apartment-website.onrender.com/api/company/get-company-data/${userInfo.email}`,
                     {
                       headers: {
                         "Content-Type": "application/json",

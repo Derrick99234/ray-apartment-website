@@ -7,6 +7,7 @@ import {
   HiChevronRight,
 } from "react-icons/hi";
 import useReverseGeocoding from "../../hooks/useReverseGeocoding";
+import Footer from "../../components/Footer";
 
 function RoomDetail() {
   const { roomId } = useParams();
@@ -22,7 +23,7 @@ function RoomDetail() {
       if (!token) return <Navigate to={"/"} />;
       try {
         const res = await fetch(
-          `http://localhost:2024/api/room/get-room/${roomId}`,
+          `https://ray-apartment-website.onrender.com/api/room/get-room/${roomId}`,
           {
             headers: {
               "content-Type": "application/json",
@@ -220,6 +221,7 @@ function RoomDetail() {
               </div>
             </section>
           </main>
+          <Footer />
         </>
       ) : (
         <p className="text-center">loading....</p>

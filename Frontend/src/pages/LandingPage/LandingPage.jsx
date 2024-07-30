@@ -27,7 +27,7 @@ function LandingPage() {
 
   useEffect(() => {
     const fetchUserDetail = async () => {
-      const res = await fetch("http://localhost:2024/api/user/get", {
+      const res = await fetch("https://ray-apartment-website.onrender.com/api/user/get", {
         headers: {
           "content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -57,7 +57,7 @@ function LandingPage() {
   useEffect(() => {
     const fetchAllRooms = async () => {
       try {
-        const res = await fetch("http://localhost:2024/api/room/get-all-rooms");
+        const res = await fetch("https://ray-apartment-website.onrender.com/api/room/get-all-rooms");
         const data = await res.json();
 
         const { room, error, message } = data;
@@ -96,7 +96,7 @@ function LandingPage() {
   const handleSearch = async () => {
     try {
       const response = await fetch(
-        `http://localhost:2024/api/room/search?query=${encodeURIComponent(
+        `https://ray-apartment-website.onrender.com/api/room/search?query=${encodeURIComponent(
           query
         )}`,
         {

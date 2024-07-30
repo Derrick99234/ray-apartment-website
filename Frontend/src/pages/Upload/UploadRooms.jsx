@@ -63,7 +63,7 @@ function UploadRooms() {
           return navigate("/login");
         }
         const response = await fetch(
-          `http://localhost:2024/api/company/get-company-data/${userInfo.email}`,
+          `https://ray-apartment-website.onrender.com/api/company/get-company-data/${userInfo.email}`,
           {
             headers: {
               "content-Type": "application/json",
@@ -1116,7 +1116,7 @@ function UploadRooms() {
       console.log("Data to send:", dataToSend);
 
       const response = await fetch(
-        "http://localhost:2024/api/room/create-room",
+        "https://ray-apartment-website.onrender.com/api/room/create-room",
         {
           headers: {
             "Content-Type": "application/json",
@@ -1135,7 +1135,7 @@ function UploadRooms() {
       }
 
       const updateResponse = await fetch(
-        `http://localhost:2024/api/company/update-company-data/${company.companyId}`,
+        `https://ray-apartment-website.onrender.com/api/company/update-company-data/${company.companyId}`,
         {
           headers: {
             "Content-Type": "application/json",
