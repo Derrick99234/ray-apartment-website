@@ -1,4 +1,5 @@
 import { HiOutlineLogout } from "react-icons/hi";
+import { GrUserManager } from "react-icons/gr";
 import {
   RiCreativeCommonsNdLine,
   RiHome4Line,
@@ -66,13 +67,23 @@ function SideBar() {
                 <RiCreativeCommonsNdLine /> Create
               </li>
             </Link>
-            <li className="py-2 w-full flex items-center gap-2 px-5 hover:bg-gray-500 hover:border-l-4 hover:border-white font-semibold">
-              <RiUser2Line /> Profile
-            </li>
+            <Link to={"/manage_rooms"}>
+              <li className="py-2 w-full flex items-center gap-2 px-5 hover:bg-gray-500 hover:border-l-4 hover:border-white font-semibold">
+                <GrUserManager /> Manage Rooms
+              </li>
+            </Link>
+            <Link to={"/company_profile"}>
+              <li className="py-2 w-full flex items-center gap-2 px-5 hover:bg-gray-500 hover:border-l-4 hover:border-white font-semibold">
+                <RiUser2Line /> Profile
+              </li>
+            </Link>
           </ul>
         </nav>
       </div>
-      <div className="py-2 w-full flex items-center gap-2 px-5 hover:bg-gray-500 hover:border-l-4 hover:border-white font-semibold cursor-pointer">
+      <div
+        className="py-2 w-full flex items-center gap-2 px-5 hover:bg-gray-500 hover:border-l-4 hover:border-white font-semibold cursor-pointer"
+        onClick={() => navigate("/logout")}
+      >
         <HiOutlineLogout /> <span>Logout</span>
       </div>
     </aside>

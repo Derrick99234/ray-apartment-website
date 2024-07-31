@@ -86,17 +86,17 @@ function Dashboard() {
     });
 
     console.log(`address: ${address}`);
-  }, []);
+  }, [rooms, address]);
 
   return (
     <>
       <div className="flex">
         <SideBar />
-        <main className="p-10 ml-auto">
+        <main className="p-10 pl-[250px]">
           <DashHeader />
           <div className="flex gap-16">
             <div
-              className="border-2 border-gray-900 bg-gray-50 rounded-lg w-80 h-52 flex flex-col gap-2 justify-center items-center cursor-pointer"
+              className="border-2 border-gray-900 mt-3 bg-gray-50 rounded-lg w-80 h-52 flex flex-col gap-2 justify-center items-center cursor-pointer"
               onClick={() => navigate("/create-room")}
             >
               <HiPlus className="text-[4.5rem] rounded-md font-bold" />

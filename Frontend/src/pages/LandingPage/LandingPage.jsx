@@ -27,12 +27,15 @@ function LandingPage() {
 
   useEffect(() => {
     const fetchUserDetail = async () => {
-      const res = await fetch("https://ray-apartment-website.onrender.com/api/user/get", {
-        headers: {
-          "content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        "https://ray-apartment-website.onrender.com/api/user/get",
+        {
+          headers: {
+            "content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       const data = await res.json();
 
@@ -42,7 +45,6 @@ function LandingPage() {
           type: "error",
           message: data.message,
         });
-        return navigate("/login");
       }
 
       if (!data.error) {
@@ -57,7 +59,9 @@ function LandingPage() {
   useEffect(() => {
     const fetchAllRooms = async () => {
       try {
-        const res = await fetch("https://ray-apartment-website.onrender.com/api/room/get-all-rooms");
+        const res = await fetch(
+          "https://ray-apartment-website.onrender.com/api/room/get-all-rooms"
+        );
         const data = await res.json();
 
         const { room, error, message } = data;

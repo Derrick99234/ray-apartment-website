@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function ProfilePopUp({ user, profileRef }) {
+  const navigate = useNavigate();
   return (
     <div
       ref={profileRef}
@@ -12,7 +13,11 @@ function ProfilePopUp({ user, profileRef }) {
           <Link className="hover:bg-slate-50 p-2" to="/register">
             Profile
           </Link>
-          <Link className="hover:bg-slate-50 p-2 border-t" to="/login">
+          <Link
+            className="hover:bg-slate-50 p-2 border-t"
+            to="/login"
+            onClick={() => navigate("/logout")}
+          >
             Log Out
           </Link>
         </>

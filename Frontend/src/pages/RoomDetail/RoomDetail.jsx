@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
+import { MdOutlineReportGmailerrorred } from "react-icons/md";
 import {
   HiArrowLeft,
   HiOutlineLocationMarker,
@@ -8,6 +9,9 @@ import {
 } from "react-icons/hi";
 import useReverseGeocoding from "../../hooks/useReverseGeocoding";
 import Footer from "../../components/Footer";
+import { LuBedDouble, LuBedSingle, LuSofa } from "react-icons/lu";
+import { GiBunkBeds } from "react-icons/gi";
+import Map from "../../components/Map/Map";
 
 function RoomDetail() {
   const { roomId } = useParams();
@@ -171,13 +175,80 @@ function RoomDetail() {
               <h2 className="text-2xl font-semibold mb-3">
                 Information about {room && room.company?.companyName}
               </h2>
-              <div
-                dangerouslySetInnerHTML={{ __html: room && room.description }}
-                className="p-5 max-w-4xl"
-              ></div>
-              <button className="w-56 bg-blue py-2 px-2 text-lg mt-4 text-white">
-                Book now
-              </button>
+              <div className="flex items-start gap-14">
+                <div className="">
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: room && room.description,
+                    }}
+                    className="p-5 max-w-4xl h-max grow-0"
+                  ></div>
+                  <button className="w-56 bg-blue py-2 px-2 text-lg mt-4 text-white">
+                    Book now
+                  </button>
+                </div>
+                <aside className="max-w-xl">
+                  <h2 className="text-md font-semibold mb-3 uppercase">
+                    {room && room.roomName} Info and Price
+                  </h2>
+
+                  <div className="w-full border p-4">
+                    <h2 className="font-semibold">Beds</h2>
+                    {room &&
+                      room.bedAvailable.map((beds, index) => {
+                        return (
+                          beds.count > 0 && (
+                            <div
+                              className="flex items-center justify-between p-2"
+                              key={index}
+                            >
+                              <div className="flex items-center gap-3">
+                                {beds.type === "Full" ? (
+                                  <LuBedSingle className="text-4xl" />
+                                ) : beds.type === "Bunk" ? (
+                                  <GiBunkBeds className="text-4xl" />
+                                ) : beds.type === "Sofa" ? (
+                                  <LuSofa className="text-4xl" />
+                                ) : (
+                                  <LuBedDouble className="text-4xl" />
+                                )}
+                                <div>
+                                  <p className="text-xl fonr-medium">
+                                    {beds.type} bed(s)
+                                  </p>
+                                </div>
+                              </div>
+                              <p className="text-xl fonr-medium">
+                                {beds.count}
+                              </p>
+                            </div>
+                          )
+                        );
+                      })}
+
+                    <p className=" my-3 text-lg">
+                      <p className="flex items-center font-semibold">
+                        <MdOutlineReportGmailerrorred className="text-xl mr-1" />{" "}
+                        Note:
+                      </p>
+                      <p className="pl-3">
+                        {room && room.numberOfRoom} available for{" "}
+                        {room && room.numberOfGuest} Guest(s)
+                      </p>
+                      <p className="pl-3">
+                        {room && room.isSmokingAllowed
+                          ? "Smoking is allowed"
+                          : "No smoking"}
+                      </p>
+                      <p className="pl-3">Pets: {room && room.petAllowed}</p>
+                    </p>
+                  </div>
+                  <Map coordinates={room && room.location} />
+                  <button className="w-full bg-blue py-2 px-2 text-lg mt-4 text-white">
+                    make reservations
+                  </button>
+                </aside>
+              </div>
             </section>
             <section id="facilities">
               <h2 className="text-2xl font-semibold my-4">

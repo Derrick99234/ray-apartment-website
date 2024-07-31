@@ -7,6 +7,9 @@ import UploadCompany from "./pages/Upload/UploadCompany";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import UploadRooms from "./pages/Upload/UploadRooms";
 import RoomDetail from "./pages/RoomDetail/RoomDetail";
+import CompanyProfile from "./pages/companyProfile/CompanyProfile";
+import Logout from "./components/Logout";
+import ManageRooms from "./pages/ManageRooms/ManageRooms";
 
 function App() {
   return (
@@ -16,6 +19,9 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/manage_rooms" element={<ManageRooms />} />
+        <Route path="/logout" element={<Logout />} />
+        <Route path="/company_profile" element={<CompanyProfile />} />
         <Route path="/upload/v2/:id" element={<UploadCompany />} />
         <Route path="/create-room" element={<UploadRooms />} />
         <Route

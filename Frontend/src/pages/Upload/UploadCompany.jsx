@@ -606,15 +606,18 @@ function UploadCompany() {
     }
   };
 
-  useEffect(() => https://ray-apartment-website.onrender.com/
+  useEffect(() => {
     const fetchUserDetail = async () => {
       try {
-        const res = await fetch("http://localhost:2024/api/user/get", {
-          headers: {
-            "content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await fetch(
+          " https://ray-apartment-website.onrender.com/api/user/get",
+          {
+            headers: {
+              "content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         const data = await res.json();
 

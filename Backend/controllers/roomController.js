@@ -217,4 +217,28 @@ const search = async (req, res) => {
   }
 };
 
-module.exports = { createRoom, readAllRooms, getRoom, search };
+const getAllCompanyRooms = async (req, res) => {
+  try {
+    const { companyID } = req.params;
+    const rooms = await Room.find({ company: companyID });
+    res.status(200).json({
+      error: true,
+      rooms,
+      message: "company rooms retrieved successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      error: true,
+      err,
+      message: "an error occured while trying to retrieve room data",
+    });
+  }
+};
+
+module.exports = {
+  createRoom,
+  readAllRooms,
+  getRoom,
+  search,
+  getAllCompanyRooms,
+};
