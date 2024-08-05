@@ -86,7 +86,7 @@ function Dashboard() {
     });
 
     console.log(`address: ${address}`);
-  }, [rooms, address]);
+  }, [rooms]);
 
   return (
     <>
@@ -125,7 +125,7 @@ function Dashboard() {
                           {address &&
                           address[index] &&
                           address[index].length > 20
-                            ? `${address[index]}...`
+                            ? `${address[index].slice(0, 20)}...`
                             : address[index]}
                         </p>
                         <p>N{room.roomPricePerNight} / per night</p>

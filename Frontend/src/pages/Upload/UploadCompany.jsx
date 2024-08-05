@@ -610,7 +610,7 @@ function UploadCompany() {
     const fetchUserDetail = async () => {
       try {
         const res = await fetch(
-          " https://ray-apartment-website.onrender.com/api/user/get",
+          "https://ray-apartment-website.onrender.com/api/user/get_user",
           {
             headers: {
               "content-Type": "application/json",
@@ -718,7 +718,7 @@ function UploadCompany() {
         </form>
       </main>
       {loading && (
-        <div className="fixed top-0 right-0 bottom-0 bg-black/50">
+        <div className="fixed top-0 right-0 bottom-0 left-0 bg-black/20">
           <div className="loader"></div>
         </div>
       )}
