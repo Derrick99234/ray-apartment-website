@@ -17,7 +17,7 @@ function ManageRooms() {
     const fetchCompanyRooms = async () => {
       try {
         const res = await fetch(
-          `http://localhost:2024/api/room/get_company_rooms/${company._id}`,
+          `https://ray-apartment-website.onrender.com/api/room/get_company_rooms/${company._id}`,
           {
             headers: {
               "content-Type": "application/json",
@@ -80,40 +80,38 @@ function ManageRooms() {
           {rooms &&
             rooms.map((room, index) => {
               return (
-                <>
-                  <div className="relative w-[340px] bg-slate-50" key={index}>
-                    <img
-                      src={room.roomPictures[0]}
-                      alt=""
-                      className="h-[380px] w-full"
-                    />
-                    <div className="div p-4">
-                      <h2 className="my-3 text-gray-700 text-2xl font-semibold">
-                        {room.roomName}
-                      </h2>
-                      <div className="flex justify-between">
-                        <span className="font-semibold text-gray-700">
-                          N{room.roomPricePerNight} <sub>per night</sub>
-                        </span>
-                        <p className="text-gray-700">3rd March, 2024</p>
-                      </div>
+                <div className="relative w-[340px] bg-slate-50" key={index}>
+                  <img
+                    src={room.roomPictures[0]}
+                    alt=""
+                    className="h-[380px] w-full"
+                  />
+                  <div className="div p-4">
+                    <h2 className="my-3 text-gray-700 text-2xl font-semibold">
+                      {room.roomName}
+                    </h2>
+                    <div className="flex justify-between">
+                      <span className="font-semibold text-gray-700">
+                        N{room.roomPricePerNight} <sub>per night</sub>
+                      </span>
+                      <p className="text-gray-700">3rd March, 2024</p>
                     </div>
-                    <FiEdit2
-                      className="absolute top-3 right-3 bg-white p-2 rounded-full text-3xl cursor-pointer"
-                      onClick={() => {
-                        setSelectedRoom(room);
-                        setManageRoomPopUp(true);
-                      }}
-                    />
-
-                    {manageRoomPopUp && selectedRoom && (
-                      <ManageRoomPopUp
-                        closePopUp={closePopUp}
-                        roomDetail={selectedRoom}
-                      />
-                    )}
                   </div>
-                </>
+                  <FiEdit2
+                    className="absolute top-3 right-3 bg-white p-2 rounded-full text-3xl cursor-pointer"
+                    onClick={() => {
+                      setSelectedRoom(room);
+                      setManageRoomPopUp(true);
+                    }}
+                  />
+
+                  {manageRoomPopUp && selectedRoom && (
+                    <ManageRoomPopUp
+                      closePopUp={closePopUp}
+                      roomDetail={selectedRoom}
+                    />
+                  )}
+                </div>
               );
             })}
         </div>

@@ -1,10 +1,14 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { RiCloseLine } from "react-icons/ri";
 import MyMapComponent from "../MyMapComponent";
 import useReverseGeocoding from "../../hooks/useReverseGeocoding";
 import { LuBedDouble, LuBedSingle, LuSofa } from "react-icons/lu";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import { GiBunkBeds } from "react-icons/gi";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
+import { CompanyContext } from "../../context/companyContext";
+import { HiLightBulb } from "react-icons/hi";
 
 /* eslint-disable react/prop-types */
 function ManageRoomPopUp({ closePopUp, roomDetail }) {
@@ -34,7 +38,50 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
   const [isSmokingAllowed, setIsSmokingAllowed] = useState(
     roomDetail?.isSmokingAllowed
   );
+  const amenityRef = useRef();
+  const [parkingPaid, setParkingPaid] = useState("");
+  const [parkingAmount, setParkingAmount] = useState("");
+  const [parkingDay, setParkingDay] = useState("");
+  const [reservation, setReservation] = useState("");
+  const [breakfast, setBreakfast] = useState(false);
+  const [breakfastPaid, setBreakfastPaid] = useState("No");
+  const [childrenPolicy, setChildrenPolicy] = useState("Upon Request");
+  const [petPolicy, setPetPolicy] = useState("");
+  const { company } = useContext(CompanyContext);
+  const handleRadioChange = (event) => {
+    setChildrenPolicy(event.target.value);
+  };
+  const handlePetPolicy = (event) => {
+    setPetPolicy(event.target.value);
+  };
 
+  const [value, setValue] = useState("");
+  const formats = [
+    "header",
+    "font",
+    "size",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+    "image",
+    "color",
+  ];
+
+  const [amenities, setAmenities] = useState([]);
+  const [addFacility, setAddFacility] = useState(false);
+
+  const handleCheckboxChange = (e, index) => {
+    const { checked } = e.target;
+    const updatedAmenities = [...amenities];
+    updatedAmenities[index].checked = checked;
+    setAmenities(updatedAmenities);
+  };
   useEffect(() => {
     roomDetail &&
       roomDetail.bedAvailable.map((beds) => {
@@ -46,7 +93,8 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
         beds.type === "Bunk" && setBunkBedNumber(beds.count);
         beds.type === "Futon" && setFutonBedNumber(beds.count);
       });
-  }, [roomDetail]);
+    setAmenities(company?.hotelAmenities);
+  }, [roomDetail, company]);
 
   return (
     <div className="fixed inset-0 bg-black/30 flex justify-center items-center">
@@ -81,13 +129,19 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
                 pictures you want to display
               </p>
             </div>
-            <div className="border p-4 bg-gray-900/10 w-full cursor-pointer">
+            <div
+              className="border p-4 bg-gray-900/10 w-full cursor-pointer"
+              onClick={() => setPopUpState("editHouseRule")}
+            >
               <h2 className="font-semibold text-xl">
                 Manage House rule and description
               </h2>
               <p>Now you can change room rules and desccriptions</p>
             </div>
-            <div className="border p-4 bg-gray-900/10 w-full cursor-pointer">
+            <div
+              className="border p-4 bg-gray-900/10 w-full cursor-pointer"
+              onClick={() => setPopUpState("editRoomDetailsAndOthers")}
+            >
               <h2 className="font-semibold text-xl">
                 Manage other room details
               </h2>
@@ -410,6 +464,442 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
                   Save
                 </button>
               </div>
+            </div>
+          </>
+        )}
+
+        {popUpState === "editHouseRule" && (
+          <>
+            <div className="w-[48rem] overflow-y-scroll">
+              <div className="p-5 border">
+                <h2 className="text-3xl font-bold">House Rule</h2>
+                <h3 className="font-semibold mt-4">Do you allow children ?</h3>
+                <div className="my-5">
+                  <div>
+                    <input
+                      type="radio"
+                      name="children"
+                      id="yes"
+                      value="Yes"
+                      checked={childrenPolicy === "Yes"}
+                      onChange={handleRadioChange}
+                    />
+                    <label htmlFor="yes" className="ml-3">
+                      Yes
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      type="radio"
+                      name="children"
+                      id="no"
+                      value="No"
+                      checked={childrenPolicy === "No"}
+                      onChange={handleRadioChange}
+                    />
+                    <label htmlFor="no" className="ml-3">
+                      No
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      type="radio"
+                      name="children"
+                      id="uponRequest"
+                      value="Upon Request"
+                      checked={childrenPolicy === "Upon Request"}
+                      onChange={handleRadioChange}
+                    />
+                    <label htmlFor="upomRequest" className="ml-3">
+                      Upon Request
+                    </label>
+                  </div>
+                </div>
+                <h3 className="font-semibold mt-4">Do you allow pets ?</h3>
+                <div className="my-5">
+                  <div>
+                    <input
+                      type="radio"
+                      name="pet"
+                      id="yes"
+                      value="Yes"
+                      checked={petPolicy === "Yes"}
+                      onChange={handlePetPolicy}
+                    />
+                    <label htmlFor="yes" className="ml-3">
+                      Yes
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      type="radio"
+                      name="pet"
+                      id="no"
+                      value="No"
+                      checked={petPolicy === "No"}
+                      onChange={handlePetPolicy}
+                    />
+                    <label htmlFor="no" className="ml-3">
+                      No
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      type="radio"
+                      name="pet"
+                      id="uponRequest"
+                      value="Upon Request"
+                      checked={petPolicy === "Upon Request"}
+                      onChange={handlePetPolicy}
+                    />
+                    <label htmlFor="upomRequest" className="ml-3">
+                      Upon Request
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div className="p-5 border mt-5">
+                <h2 className="text-3xl font-bold">
+                  Tell us about parking situations
+                </h2>
+                <h3 className="font-semibold mt-4">
+                  Is parking space available?
+                </h3>
+                <div className="my-5">
+                  <div>
+                    <input
+                      type="radio"
+                      name="parking"
+                      id="free"
+                      value="Free"
+                      checked={parkingPaid === "Free"}
+                      onChange={(e) => setParkingPaid(e.target.value)}
+                    />
+                    <label htmlFor="free" className="ml-3">
+                      Yes, free
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      type="radio"
+                      name="parking"
+                      id="paid"
+                      value="Paid"
+                      checked={parkingPaid === "Paid"}
+                      onChange={(e) => setParkingPaid(e.target.value)}
+                    />
+                    <label htmlFor="paid" className="ml-3">
+                      Yes, paid
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      type="radio"
+                      name="parking"
+                      id="no"
+                      value="No"
+                      checked={parkingPaid === "No"}
+                      onChange={(e) => setParkingPaid(e.target.value)}
+                    />
+                    <label htmlFor="no" className="ml-3">
+                      No
+                    </label>
+                  </div>
+                </div>
+                {parkingPaid === "Paid" && (
+                  <>
+                    <div>
+                      <h3 className="font-semibold my-4">
+                        How much does parking cost?
+                      </h3>
+                      <div className="flex gap-3">
+                        <input
+                          type="text"
+                          placeholder="Naira NGN"
+                          className="w-full py-2 px-5 outline-none border"
+                          onChange={(e) => setParkingAmount(e.target.value)}
+                        />
+                        <select
+                          name="parkingDay"
+                          id="parkingDay"
+                          className="w-40 p-2"
+                          onChange={(e) => setParkingDay(e.target.value)}
+                        >
+                          <option value="per day">per day</option>
+                          <option value="per month">per month</option>
+                        </select>
+                      </div>
+                      <h3 className="font-semibold my-4">
+                        Do guests need to reserve a parking spot?
+                      </h3>
+                      <div className="my-5">
+                        <div>
+                          <input
+                            type="radio"
+                            name="reservation"
+                            id="reservationNeeded"
+                            value="Reservation Needed"
+                            checked={reservation === "Reservation Needed"}
+                            onChange={(e) => setReservation(e.target.value)}
+                          />
+                          <label htmlFor="reservationNeeded" className="ml-3">
+                            Reservation Needed
+                          </label>
+                        </div>
+                        <div>
+                          <input
+                            type="radio"
+                            name="reservation"
+                            id="noReservationNeeded"
+                            value="No Reservation Needed"
+                            checked={reservation === "No Reservation Needed"}
+                            onChange={(e) => setReservation(e.target.value)}
+                          />
+                          <label htmlFor="noReservationNeeded" className="ml-3">
+                            No Reservation Needed
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <div className="p-5 border mt-5">
+                <h2 className="text-3xl font-bold">Breakfast Detail</h2>
+                <h3 className="font-semibold mt-4">
+                  Do you serve your guests breakfast?
+                </h3>
+                <div className="my-5">
+                  <div>
+                    <input
+                      type="radio"
+                      name="breakfast"
+                      id="yesBreakfast"
+                      checked={breakfast}
+                      onChange={() => setBreakfast(true)}
+                    />
+                    <label htmlFor="yesBreakfast" className="ml-3">
+                      Yes
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      type="radio"
+                      name="breakfast"
+                      id="noBreakfast"
+                      checked={!breakfast}
+                      onChange={() => setBreakfast(false)}
+                    />
+                    <label htmlFor="noBreakfast" className="ml-3">
+                      No
+                    </label>
+                  </div>
+                </div>
+                {breakfast && (
+                  <>
+                    <h3 className="font-semibold mt-4">
+                      Is breakfast included in the guest&apos;s pay?
+                    </h3>
+                    <div className="my-5">
+                      <div>
+                        <input
+                          type="radio"
+                          name="breakfastPaid"
+                          id="yesBreakfastPaid"
+                          checked={breakfastPaid}
+                          onChange={() => setBreakfastPaid(true)}
+                        />
+                        <label htmlFor="yesBreakfastPaid" className="ml-3">
+                          Yes
+                        </label>
+                      </div>
+                      <div>
+                        <input
+                          type="radio"
+                          name="breakfastPaid"
+                          id="noBreakfastPaid"
+                          checked={!breakfastPaid}
+                          onChange={() => setBreakfastPaid(false)}
+                        />
+                        <label htmlFor="noBreakfastPaid" className="ml-3">
+                          No
+                        </label>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+              <h2 className="text-2xl font-bold mb-3">Description</h2>
+              <ReactQuill
+                value={value}
+                formats={formats}
+                onChange={(newValue) => setValue(newValue)}
+                className="h-[60vh] mb-10"
+              />
+              <div className="flex items-center gap-4 justify-between mt-10">
+                <button
+                  type="button"
+                  className="bg-gray-300 text-black py-2 w-full"
+                  onClick={() => setPopUpState("options")}
+                >
+                  Back
+                </button>
+                <button
+                  type="button"
+                  className="bg-slate-700 hover:bg-slate-800 text-white py-2 w-full disabled:cursor-not-allowed disabled:bg-slate-400"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+
+        {popUpState === "editRoomDetailsAndOthers" && (
+          <>
+            <h2 className="text-2xl font-bold">
+              What can guests use at your hotel?
+            </h2>
+            <div className="flex gap-5">
+              <div className="p-5 border mt-5 w-[652px]">
+                {amenities &&
+                  amenities.map((item, index) => (
+                    <div key={index} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        className="form-checkbox w-6 h-6 text-slate-800 p-2 border border-gray-300 rounded-md mr-3"
+                        value={item.name}
+                        checked={item.checked}
+                        onChange={(e) => handleCheckboxChange(e, index)}
+                      />
+                      <span className="text-lg">{item.name}</span>
+                    </div>
+                  ))}
+              </div>
+              <div className="flex gap-2 max-w-sm border p-5">
+                <HiLightBulb className="text-4xl" />
+                <div>
+                  <h3 className="font-semibold text-lg mb-4">
+                    These are the hotel amenities you chose at the time of
+                    registration
+                  </h3>
+                  <p>
+                    You can{" "}
+                    <span
+                      className="text-blue cursor-pointer"
+                      onClick={() => {
+                        setAddFacility(true);
+                        setAmenities([...company.hotelAmenities]);
+                      }}
+                    >
+                      add
+                    </span>{" "}
+                    more facilities
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 flex-wrap my-3">
+              {amenities.length > 0 &&
+                amenities.map((item, index) => (
+                  <span
+                    key={index}
+                    className="px-2 py-[2px] text-sm border rounded-sm flex items-center gap-1"
+                  >
+                    {item.name}
+                    <RiCloseLine
+                      onClick={() => {
+                        const filteredList = amenities.filter(
+                          (data) => data.name !== item.name
+                        );
+                        setAmenities(filteredList);
+                      }}
+                      className="cursor-pointer"
+                    />
+                  </span>
+                ))}
+            </div>
+            {addFacility && (
+              <div className="flex items-center h-10 gap-3 mt-4">
+                <input
+                  type="text"
+                  className="w-full py-2 px-5 border rounded-sm outline-none"
+                  placeholder="Add your hotel facilities available for this room"
+                  ref={amenityRef}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setAmenities([
+                        ...amenities,
+                        { name: amenityRef.current.value, checked: false },
+                      ]);
+                      amenityRef.current.value = "";
+                    }
+                  }}
+                />
+                <button
+                  className="font-bold text-xl bg-gray-800 w-14 text-white rounded-md h-full"
+                  type="button"
+                  onClick={() => {
+                    if (amenityRef.current.value.trim() !== "") {
+                      setAmenities([
+                        ...amenities,
+                        {
+                          name: amenityRef.current.value.trim(),
+                          checked: false,
+                        },
+                      ]);
+                      amenityRef.current.value = "";
+                    }
+                  }}
+                >
+                  +
+                </button>
+              </div>
+            )}
+            {/* <h2 className="bg-gray-900 py-2 px-4 text-white font-semibold">
+              Set the price per night for this room
+            </h2> */}
+            <div className="py-5 px-5  my-4 max-w-md border bg-white shadow-md">
+              <h3 className="font-semibold ">
+                How much do you want to charge per night ?
+              </h3>
+              <div>
+                <label htmlFor="pricePerNight" className="mt-4 block text-sm">
+                  Price guest pay
+                </label>
+                <div className="flex items-center mb-3">
+                  <span className="bg-slate-200 border py-2 px-3 rounded-l-md font-semibold">
+                    NGN
+                  </span>
+                  <input
+                    type="text"
+                    className="w-full border py-2 px-3 rounded-r-md outline-none"
+                    placeholder=""
+                    onChange={(e) =>
+                      setRoomData({
+                        ...roomData,
+                        roomPricePerNight: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 justify-between mt-10">
+              <button
+                type="button"
+                className="bg-gray-300 text-black py-2 w-full"
+                onClick={() => setPopUpState("options")}
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                className="bg-slate-700 hover:bg-slate-800 text-white py-2 w-full disabled:cursor-not-allowed disabled:bg-slate-400"
+              >
+                Save
+              </button>
             </div>
           </>
         )}
