@@ -304,7 +304,42 @@ const editRoomDetail = async (req, res) => {
       message: "room details updated successfully",
     });
   } catch (err) {
+    return res.status(500).json({
+      error: true,
+      err,
+      message: "Internal server error",
+    });
+  }
+};
+
+const editHouseRule = async (req, res) => {
+  const { roomID } = req.params;
+  const { childrenAllowed, petAllowed, parking, breakfast } = req.body;
+
+  try {
+    const room = await Room.findOne({ _id: roomID });
+
+    if (!room) {
+      return res.status(404).json({
+        error: true,
+        message: "room not found",
+      });
+    }
+
+    if (childrenAllowed) room.childrenAllowed = childrenAllowed;
+    if (petAllowed) room.petAllowed = petAllowed;
+    if (parking) room.parking = parking;
+    if (breakfast) room.breakfast = breakfast;
+
+    await room.save();
+
     return res.status(200).json({
+      error: false,
+      room,
+      message: "House rule and description updatd successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
       error: true,
       err,
       message: "Internal server error",
@@ -320,4 +355,5 @@ module.exports = {
   getAllCompanyRooms,
   editRoomLocation,
   editRoomDetail,
+  editHouseRule,
 };
