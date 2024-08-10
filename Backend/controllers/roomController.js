@@ -171,7 +171,7 @@ const getAddressFromCoordinates = async (lat, lon) => {
   }
   return { formatted: "Unknown location", city: "", state: "", country: "" };
 };
-
+``;
 // Mapping of known aliases
 const aliases = {
   "Federal Capital Territory": "Abuja",
@@ -235,10 +235,89 @@ const getAllCompanyRooms = async (req, res) => {
   }
 };
 
+const editRoomLocation = async (req, res) => {
+  const roomID = req.params.roomID;
+  const { location } = req.body;
+
+  try {
+    const room = await Room.findOne({ _id: roomID });
+
+    if (!location)
+      return res.status(404).json({
+        error: true,
+        message: "No changes was made",
+      });
+
+    if (location) room.location = location;
+    await room.save();
+
+    res.status(200).json({
+      error: false,
+      room,
+      message: "Room data updated successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      error: true,
+      err,
+      message: "an error occured while trying to retrieve room data",
+    });
+  }
+};
+
+const editRoomDetail = async (req, res) => {
+  const {
+    roomName,
+    numberOfRoom,
+    bedAvailable,
+    numberOfGuest,
+    isSmokingAllowed,
+  } = req.body;
+
+  const { roomID } = req.params;
+  try {
+    const room = await Room.findOne({ _id: roomID });
+
+    if (
+      !roomName &&
+      !numberOfRoom &&
+      !bedAvailable &&
+      !isSmokingAllowed &&
+      !numberOfGuest
+    ) {
+      return res.status(404).json({
+        error: true,
+        message: "No changes was made",
+      });
+    }
+
+    if (roomName) room.roomName = roomName;
+    if (numberOfRoom) room.numberOfRoom = numberOfRoom;
+    if (bedAvailable) room.bedAvailable = bedAvailable;
+    if (isSmokingAllowed) room.isSmokingAllowed = isSmokingAllowed;
+    if (numberOfGuest) room.numberOfGuest = numberOfGuest;
+    await room.save();
+
+    res.status(200).json({
+      error: false,
+      room,
+      message: "room details updated successfully",
+    });
+  } catch (err) {
+    return res.status(200).json({
+      error: true,
+      err,
+      message: "Internal server error",
+    });
+  }
+};
+
 module.exports = {
   createRoom,
   readAllRooms,
   getRoom,
   search,
   getAllCompanyRooms,
+  editRoomLocation,
+  editRoomDetail,
 };

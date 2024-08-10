@@ -96,6 +96,84 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
     setAmenities(company?.hotelAmenities);
   }, [roomDetail, company]);
 
+  const [loading, setLoading] = useState(false);
+  const token = localStorage.getItem("token");
+
+  const onSubmitLocation = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `http://localhost:2024/api/room/update_room_location/${roomDetail?._id}`,
+        {
+          headers: {
+            "content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          method: "PATCH",
+          body: JSON.stringify({ location }),
+        }
+      );
+      console.log(JSON.stringify({ location }));
+      const data = await res.json();
+      if (!data.error) {
+        console.log("Location updated successfully");
+      } else {
+        console.log("error when trying to updated location");
+      }
+      console.log(data);
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+    }
+  };
+
+  const onSubmitRoomDetail = async () => {
+    setLoading(true);
+    const dataToSend = {
+      ...roomData,
+      bedAvailable: [
+        { type: "Full", count: fullBedNumber },
+        { type: "Twin", count: twinBedNumber },
+        { type: "Queen", count: queenBedNumber },
+        { type: "King", count: kingBedNumber },
+        { type: "Bunk", count: bunkBedNumber },
+        { type: "Sofa", count: sofaBedNumber },
+        { type: "Futon", count: futonBedNumber },
+      ],
+      numberOfGuest: numberOfGuestInRoom,
+      isSmokingAllowed,
+    };
+
+    try {
+      console.log("Data to send:", dataToSend);
+
+      const res = await fetch(
+        `http://localhost:2024/api/room/update_room_details/${roomDetail?._id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(dataToSend),
+          method: "PATCH",
+        }
+      );
+
+      const data = await res.json();
+      if (!data.error) {
+        console.log("Room deta updated successfully");
+      } else {
+        console.log("error when trying to updated location");
+      }
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black/30 flex justify-center items-center">
       <div className="max-w-3xl bg-white p-4 flex flex-col gap-5 rounded-md relative pt-10 z-50 max-h-svh">
@@ -171,9 +249,10 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
               </button>
               <button
                 type="button"
+                onClick={onSubmitLocation}
                 className="bg-slate-700 hover:bg-slate-800 text-white py-2 w-full disabled:cursor-not-allowed disabled:bg-slate-400"
               >
-                Save
+                {loading ? "saving..." : "Save"}
               </button>
             </div>
           </>
@@ -407,14 +486,18 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
                 <div className="border flex justify-betwwen items-center max-w-32">
                   <div
                     className="p-4 hover:bg-gray-600 py-2 font-semibold hover:text-white text-xl cursor-pointer"
-                    onClick={() => setNumberOfGuestInRoom((prev) => prev - 1)}
+                    onClick={() =>
+                      setNumberOfGuestInRoom((prev) => Number(prev) - 1)
+                    }
                   >
                     -
                   </div>
                   <div className="p-4 py-2">{numberOfGuestInRoom}</div>
                   <div
                     className="p-4 hover:bg-gray-600 py-2 font-semibold hover:text-white text-xl cursor-pointer"
-                    onClick={() => setNumberOfGuestInRoom((prev) => prev + 1)}
+                    onClick={() =>
+                      setNumberOfGuestInRoom((prev) => Number(prev) + 1)
+                    }
                   >
                     +
                   </div>
@@ -459,9 +542,10 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
                 </button>
                 <button
                   type="button"
+                  onClick={onSubmitRoomDetail}
                   className="bg-slate-700 hover:bg-slate-800 text-white py-2 w-full disabled:cursor-not-allowed disabled:bg-slate-400"
                 >
-                  Save
+                  {loading ? "saving..." : "Save"}
                 </button>
               </div>
             </div>
