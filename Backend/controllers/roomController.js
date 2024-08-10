@@ -349,6 +349,39 @@ const editHouseRule = async (req, res) => {
   }
 };
 
+const editOtherRoomDetails = async (req, res) => {
+  const { roomID } = req.params;
+
+  const { roomFacility, roomPricePerNight } = req.body;
+  try {
+    const room = await Room.findOne({ _id: roomID });
+
+    if (!room) {
+      return res.status(404).json({
+        error: true,
+        message: "room noot found",
+      });
+    }
+
+    if (roomFacility) room.roomFacility = roomFacility;
+    if (roomPricePerNight) room.roomPricePerNight = roomPricePerNight;
+
+    await room.save();
+
+    return res.status(200).json({
+      error: false,
+      room,
+      message: "room data updated successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      error: true,
+      err,
+      message: "Internal server error",
+    });
+  }
+};
+
 module.exports = {
   createRoom,
   readAllRooms,
@@ -358,4 +391,5 @@ module.exports = {
   editRoomLocation,
   editRoomDetail,
   editHouseRule,
+  editOtherRoomDetails,
 };

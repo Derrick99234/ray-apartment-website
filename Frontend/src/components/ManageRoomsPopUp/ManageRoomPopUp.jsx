@@ -207,6 +207,8 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
       console.log(data);
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -870,7 +872,7 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
                   onClick={updateHouseRule}
                   className="bg-slate-700 hover:bg-slate-800 text-white py-2 w-full disabled:cursor-not-allowed disabled:bg-slate-400"
                 >
-                  Save
+                  {loading ? "saving..." : "Save"}
                 </button>
               </div>
             </div>
