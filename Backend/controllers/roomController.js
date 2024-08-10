@@ -314,7 +314,8 @@ const editRoomDetail = async (req, res) => {
 
 const editHouseRule = async (req, res) => {
   const { roomID } = req.params;
-  const { childrenAllowed, petAllowed, parking, breakfast } = req.body;
+  const { childrenAllowed, petAllowed, parking, breakfast, description } =
+    req.body;
 
   try {
     const room = await Room.findOne({ _id: roomID });
@@ -330,6 +331,7 @@ const editHouseRule = async (req, res) => {
     if (petAllowed) room.petAllowed = petAllowed;
     if (parking) room.parking = parking;
     if (breakfast) room.breakfast = breakfast;
+    if (description) room.description = description;
 
     await room.save();
 

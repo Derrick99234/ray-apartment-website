@@ -55,7 +55,7 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
     setPetPolicy(event.target.value);
   };
 
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(roomDetail?.description);
   const formats = [
     "header",
     "font",
@@ -171,6 +171,42 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
       console.log(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const updateHouseRule = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `http://localhost:2024/api/room/update_house_rule/${roomDetail?._id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            childrenAllowed: childrenPolicy,
+            petAllowed: petPolicy,
+            parking: [{ parkingPaid, reservation, parkingAmount, parkingDay }],
+            breakfast: {
+              serve: breakfast,
+              included: breakfastPaid,
+            },
+            description: value,
+          }),
+          method: "PATCH",
+        }
+      );
+
+      const data = await res.json();
+      if (!data.error) {
+        console.log("Room deta updated successfully");
+      } else {
+        console.log("error when trying to updated location");
+      }
+      console.log(data);
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -831,6 +867,7 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
                 </button>
                 <button
                   type="button"
+                  onClick={updateHouseRule}
                   className="bg-slate-700 hover:bg-slate-800 text-white py-2 w-full disabled:cursor-not-allowed disabled:bg-slate-400"
                 >
                   Save
