@@ -31,7 +31,9 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
   const [bunkBedNumber, setBunkBedNumber] = useState(0);
   const [futonBedNumber, setFutonBedNumber] = useState(0);
   const [moreOption, setMoreOption] = useState(false);
-  const [roomData, setRoomData] = useState({});
+  const [roomData, setRoomData] = useState({
+    roomPricePerNight: roomDetail.roomPricePerNight,
+  });
   const [numberOfGuestInRoom, setNumberOfGuestInRoom] = useState(
     roomDetail?.numberOfGuest
   );
@@ -212,6 +214,59 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
     }
   };
 
+  const updateOtherRoomData = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `http://localhost:2024/api/room/update_other_room_details/${roomDetail?._id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            roomFacility: amenities,
+            roomPricePerNight: roomData.roomPricePerNight,
+          }),
+          method: "PATCH",
+        }
+      );
+      const data = await response.json();
+
+      const updateResponse = await fetch(
+        `https://ray-apartment-website.onrender.com/api/company/update-company-data/${company.companyId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ hotelAmenities: amenities }),
+          method: "PUT",
+        }
+      );
+
+      const updateResponseData = await updateResponse.json();
+
+      if (!updateResponse.ok) {
+        console.error("Error update response data:", updateResponseData);
+        throw new Error(
+          updateResponseData.message || "Error updating company data"
+        );
+      }
+
+      if (!data.error) {
+        console.log("Room deta updated successfully");
+      } else {
+        console.log("error when trying to updated location");
+      }
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black/30 flex justify-center items-center">
       <div className="max-w-3xl bg-white p-4 flex flex-col gap-5 rounded-md relative pt-10 z-50 max-h-svh">
@@ -294,6 +349,36 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
               </button>
             </div>
           </>
+        )}
+
+        {popUpState === "editRoomPictures" && (
+          <div className="w-[48rem] overflow-y-scroll">
+            <div className="flex items-center gap-4 justify-between mt-10">
+              <div className="grid grid-cols-2 gap-8">
+                <div className="flex items center justi">
+                  <img
+                    src={roomDetail?.roomPictures[0]}
+                    alt=""
+                    className="w-full h-[200px] rounded-md"
+                  />
+                </div>
+              </div>
+              <button
+                type="button"
+                className="bg-gray-300 text-black py-2 w-full"
+                onClick={() => setPopUpState("options")}
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                onClick={onSubmitLocation}
+                className="bg-slate-700 hover:bg-slate-800 text-white py-2 w-full disabled:cursor-not-allowed disabled:bg-slate-400"
+              >
+                {loading ? "saving..." : "Save"}
+              </button>
+            </div>
+          </div>
         )}
 
         {popUpState === "editRoomDetails" && (
@@ -591,296 +676,294 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
         )}
 
         {popUpState === "editHouseRule" && (
-          <>
-            <div className="w-[48rem] overflow-y-scroll">
-              <div className="p-5 border">
-                <h2 className="text-3xl font-bold">House Rule</h2>
-                <h3 className="font-semibold mt-4">Do you allow children ?</h3>
-                <div className="my-5">
-                  <div>
-                    <input
-                      type="radio"
-                      name="children"
-                      id="yes"
-                      value="Yes"
-                      checked={childrenPolicy === "Yes"}
-                      onChange={handleRadioChange}
-                    />
-                    <label htmlFor="yes" className="ml-3">
-                      Yes
-                    </label>
-                  </div>
-                  <div>
-                    <input
-                      type="radio"
-                      name="children"
-                      id="no"
-                      value="No"
-                      checked={childrenPolicy === "No"}
-                      onChange={handleRadioChange}
-                    />
-                    <label htmlFor="no" className="ml-3">
-                      No
-                    </label>
-                  </div>
-                  <div>
-                    <input
-                      type="radio"
-                      name="children"
-                      id="uponRequest"
-                      value="Upon Request"
-                      checked={childrenPolicy === "Upon Request"}
-                      onChange={handleRadioChange}
-                    />
-                    <label htmlFor="upomRequest" className="ml-3">
-                      Upon Request
-                    </label>
-                  </div>
+          <div className="w-[48rem] overflow-y-scroll">
+            <div className="p-5 border">
+              <h2 className="text-3xl font-bold">House Rule</h2>
+              <h3 className="font-semibold mt-4">Do you allow children ?</h3>
+              <div className="my-5">
+                <div>
+                  <input
+                    type="radio"
+                    name="children"
+                    id="yes"
+                    value="Yes"
+                    checked={childrenPolicy === "Yes"}
+                    onChange={handleRadioChange}
+                  />
+                  <label htmlFor="yes" className="ml-3">
+                    Yes
+                  </label>
                 </div>
-                <h3 className="font-semibold mt-4">Do you allow pets ?</h3>
-                <div className="my-5">
-                  <div>
-                    <input
-                      type="radio"
-                      name="pet"
-                      id="yes"
-                      value="Yes"
-                      checked={petPolicy === "Yes"}
-                      onChange={handlePetPolicy}
-                    />
-                    <label htmlFor="yes" className="ml-3">
-                      Yes
-                    </label>
-                  </div>
-                  <div>
-                    <input
-                      type="radio"
-                      name="pet"
-                      id="no"
-                      value="No"
-                      checked={petPolicy === "No"}
-                      onChange={handlePetPolicy}
-                    />
-                    <label htmlFor="no" className="ml-3">
-                      No
-                    </label>
-                  </div>
-                  <div>
-                    <input
-                      type="radio"
-                      name="pet"
-                      id="uponRequest"
-                      value="Upon Request"
-                      checked={petPolicy === "Upon Request"}
-                      onChange={handlePetPolicy}
-                    />
-                    <label htmlFor="upomRequest" className="ml-3">
-                      Upon Request
-                    </label>
-                  </div>
+                <div>
+                  <input
+                    type="radio"
+                    name="children"
+                    id="no"
+                    value="No"
+                    checked={childrenPolicy === "No"}
+                    onChange={handleRadioChange}
+                  />
+                  <label htmlFor="no" className="ml-3">
+                    No
+                  </label>
+                </div>
+                <div>
+                  <input
+                    type="radio"
+                    name="children"
+                    id="uponRequest"
+                    value="Upon Request"
+                    checked={childrenPolicy === "Upon Request"}
+                    onChange={handleRadioChange}
+                  />
+                  <label htmlFor="upomRequest" className="ml-3">
+                    Upon Request
+                  </label>
                 </div>
               </div>
-              <div className="p-5 border mt-5">
-                <h2 className="text-3xl font-bold">
-                  Tell us about parking situations
-                </h2>
-                <h3 className="font-semibold mt-4">
-                  Is parking space available?
-                </h3>
-                <div className="my-5">
-                  <div>
-                    <input
-                      type="radio"
-                      name="parking"
-                      id="free"
-                      value="Free"
-                      checked={parkingPaid === "Free"}
-                      onChange={(e) => setParkingPaid(e.target.value)}
-                    />
-                    <label htmlFor="free" className="ml-3">
-                      Yes, free
-                    </label>
-                  </div>
-                  <div>
-                    <input
-                      type="radio"
-                      name="parking"
-                      id="paid"
-                      value="Paid"
-                      checked={parkingPaid === "Paid"}
-                      onChange={(e) => setParkingPaid(e.target.value)}
-                    />
-                    <label htmlFor="paid" className="ml-3">
-                      Yes, paid
-                    </label>
-                  </div>
-                  <div>
-                    <input
-                      type="radio"
-                      name="parking"
-                      id="no"
-                      value="No"
-                      checked={parkingPaid === "No"}
-                      onChange={(e) => setParkingPaid(e.target.value)}
-                    />
-                    <label htmlFor="no" className="ml-3">
-                      No
-                    </label>
-                  </div>
+              <h3 className="font-semibold mt-4">Do you allow pets ?</h3>
+              <div className="my-5">
+                <div>
+                  <input
+                    type="radio"
+                    name="pet"
+                    id="yes"
+                    value="Yes"
+                    checked={petPolicy === "Yes"}
+                    onChange={handlePetPolicy}
+                  />
+                  <label htmlFor="yes" className="ml-3">
+                    Yes
+                  </label>
                 </div>
-                {parkingPaid === "Paid" && (
-                  <>
-                    <div>
-                      <h3 className="font-semibold my-4">
-                        How much does parking cost?
-                      </h3>
-                      <div className="flex gap-3">
-                        <input
-                          type="text"
-                          placeholder="Naira NGN"
-                          className="w-full py-2 px-5 outline-none border"
-                          onChange={(e) => setParkingAmount(e.target.value)}
-                        />
-                        <select
-                          name="parkingDay"
-                          id="parkingDay"
-                          className="w-40 p-2"
-                          onChange={(e) => setParkingDay(e.target.value)}
-                        >
-                          <option value="per day">per day</option>
-                          <option value="per month">per month</option>
-                        </select>
-                      </div>
-                      <h3 className="font-semibold my-4">
-                        Do guests need to reserve a parking spot?
-                      </h3>
-                      <div className="my-5">
-                        <div>
-                          <input
-                            type="radio"
-                            name="reservation"
-                            id="reservationNeeded"
-                            value="Reservation Needed"
-                            checked={reservation === "Reservation Needed"}
-                            onChange={(e) => setReservation(e.target.value)}
-                          />
-                          <label htmlFor="reservationNeeded" className="ml-3">
-                            Reservation Needed
-                          </label>
-                        </div>
-                        <div>
-                          <input
-                            type="radio"
-                            name="reservation"
-                            id="noReservationNeeded"
-                            value="No Reservation Needed"
-                            checked={reservation === "No Reservation Needed"}
-                            onChange={(e) => setReservation(e.target.value)}
-                          />
-                          <label htmlFor="noReservationNeeded" className="ml-3">
-                            No Reservation Needed
-                          </label>
-                        </div>
-                      </div>
+                <div>
+                  <input
+                    type="radio"
+                    name="pet"
+                    id="no"
+                    value="No"
+                    checked={petPolicy === "No"}
+                    onChange={handlePetPolicy}
+                  />
+                  <label htmlFor="no" className="ml-3">
+                    No
+                  </label>
+                </div>
+                <div>
+                  <input
+                    type="radio"
+                    name="pet"
+                    id="uponRequest"
+                    value="Upon Request"
+                    checked={petPolicy === "Upon Request"}
+                    onChange={handlePetPolicy}
+                  />
+                  <label htmlFor="upomRequest" className="ml-3">
+                    Upon Request
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div className="p-5 border mt-5">
+              <h2 className="text-3xl font-bold">
+                Tell us about parking situations
+              </h2>
+              <h3 className="font-semibold mt-4">
+                Is parking space available?
+              </h3>
+              <div className="my-5">
+                <div>
+                  <input
+                    type="radio"
+                    name="parking"
+                    id="free"
+                    value="Free"
+                    checked={parkingPaid === "Free"}
+                    onChange={(e) => setParkingPaid(e.target.value)}
+                  />
+                  <label htmlFor="free" className="ml-3">
+                    Yes, free
+                  </label>
+                </div>
+                <div>
+                  <input
+                    type="radio"
+                    name="parking"
+                    id="paid"
+                    value="Paid"
+                    checked={parkingPaid === "Paid"}
+                    onChange={(e) => setParkingPaid(e.target.value)}
+                  />
+                  <label htmlFor="paid" className="ml-3">
+                    Yes, paid
+                  </label>
+                </div>
+                <div>
+                  <input
+                    type="radio"
+                    name="parking"
+                    id="no"
+                    value="No"
+                    checked={parkingPaid === "No"}
+                    onChange={(e) => setParkingPaid(e.target.value)}
+                  />
+                  <label htmlFor="no" className="ml-3">
+                    No
+                  </label>
+                </div>
+              </div>
+              {parkingPaid === "Paid" && (
+                <>
+                  <div>
+                    <h3 className="font-semibold my-4">
+                      How much does parking cost?
+                    </h3>
+                    <div className="flex gap-3">
+                      <input
+                        type="text"
+                        placeholder="Naira NGN"
+                        className="w-full py-2 px-5 outline-none border"
+                        onChange={(e) => setParkingAmount(e.target.value)}
+                      />
+                      <select
+                        name="parkingDay"
+                        id="parkingDay"
+                        className="w-40 p-2"
+                        onChange={(e) => setParkingDay(e.target.value)}
+                      >
+                        <option value="per day">per day</option>
+                        <option value="per month">per month</option>
+                      </select>
                     </div>
-                  </>
-                )}
-              </div>
-
-              <div className="p-5 border mt-5">
-                <h2 className="text-3xl font-bold">Breakfast Detail</h2>
-                <h3 className="font-semibold mt-4">
-                  Do you serve your guests breakfast?
-                </h3>
-                <div className="my-5">
-                  <div>
-                    <input
-                      type="radio"
-                      name="breakfast"
-                      id="yesBreakfast"
-                      checked={breakfast}
-                      onChange={() => setBreakfast(true)}
-                    />
-                    <label htmlFor="yesBreakfast" className="ml-3">
-                      Yes
-                    </label>
-                  </div>
-                  <div>
-                    <input
-                      type="radio"
-                      name="breakfast"
-                      id="noBreakfast"
-                      checked={!breakfast}
-                      onChange={() => setBreakfast(false)}
-                    />
-                    <label htmlFor="noBreakfast" className="ml-3">
-                      No
-                    </label>
-                  </div>
-                </div>
-                {breakfast && (
-                  <>
-                    <h3 className="font-semibold mt-4">
-                      Is breakfast included in the guest&apos;s pay?
+                    <h3 className="font-semibold my-4">
+                      Do guests need to reserve a parking spot?
                     </h3>
                     <div className="my-5">
                       <div>
                         <input
                           type="radio"
-                          name="breakfastPaid"
-                          id="yesBreakfastPaid"
-                          checked={breakfastPaid}
-                          onChange={() => setBreakfastPaid(true)}
+                          name="reservation"
+                          id="reservationNeeded"
+                          value="Reservation Needed"
+                          checked={reservation === "Reservation Needed"}
+                          onChange={(e) => setReservation(e.target.value)}
                         />
-                        <label htmlFor="yesBreakfastPaid" className="ml-3">
-                          Yes
+                        <label htmlFor="reservationNeeded" className="ml-3">
+                          Reservation Needed
                         </label>
                       </div>
                       <div>
                         <input
                           type="radio"
-                          name="breakfastPaid"
-                          id="noBreakfastPaid"
-                          checked={!breakfastPaid}
-                          onChange={() => setBreakfastPaid(false)}
+                          name="reservation"
+                          id="noReservationNeeded"
+                          value="No Reservation Needed"
+                          checked={reservation === "No Reservation Needed"}
+                          onChange={(e) => setReservation(e.target.value)}
                         />
-                        <label htmlFor="noBreakfastPaid" className="ml-3">
-                          No
+                        <label htmlFor="noReservationNeeded" className="ml-3">
+                          No Reservation Needed
                         </label>
                       </div>
                     </div>
-                  </>
-                )}
-              </div>
-              <h2 className="text-2xl font-bold mb-3">Description</h2>
-              <ReactQuill
-                value={value}
-                formats={formats}
-                onChange={(newValue) => setValue(newValue)}
-                className="h-[60vh] mb-10"
-              />
-              <div className="flex items-center gap-4 justify-between mt-10">
-                <button
-                  type="button"
-                  className="bg-gray-300 text-black py-2 w-full"
-                  onClick={() => setPopUpState("options")}
-                >
-                  Back
-                </button>
-                <button
-                  type="button"
-                  onClick={updateHouseRule}
-                  className="bg-slate-700 hover:bg-slate-800 text-white py-2 w-full disabled:cursor-not-allowed disabled:bg-slate-400"
-                >
-                  {loading ? "saving..." : "Save"}
-                </button>
-              </div>
+                  </div>
+                </>
+              )}
             </div>
-          </>
+
+            <div className="p-5 border mt-5">
+              <h2 className="text-3xl font-bold">Breakfast Detail</h2>
+              <h3 className="font-semibold mt-4">
+                Do you serve your guests breakfast?
+              </h3>
+              <div className="my-5">
+                <div>
+                  <input
+                    type="radio"
+                    name="breakfast"
+                    id="yesBreakfast"
+                    checked={breakfast}
+                    onChange={() => setBreakfast(true)}
+                  />
+                  <label htmlFor="yesBreakfast" className="ml-3">
+                    Yes
+                  </label>
+                </div>
+                <div>
+                  <input
+                    type="radio"
+                    name="breakfast"
+                    id="noBreakfast"
+                    checked={!breakfast}
+                    onChange={() => setBreakfast(false)}
+                  />
+                  <label htmlFor="noBreakfast" className="ml-3">
+                    No
+                  </label>
+                </div>
+              </div>
+              {breakfast && (
+                <>
+                  <h3 className="font-semibold mt-4">
+                    Is breakfast included in the guest&apos;s pay?
+                  </h3>
+                  <div className="my-5">
+                    <div>
+                      <input
+                        type="radio"
+                        name="breakfastPaid"
+                        id="yesBreakfastPaid"
+                        checked={breakfastPaid}
+                        onChange={() => setBreakfastPaid(true)}
+                      />
+                      <label htmlFor="yesBreakfastPaid" className="ml-3">
+                        Yes
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="radio"
+                        name="breakfastPaid"
+                        id="noBreakfastPaid"
+                        checked={!breakfastPaid}
+                        onChange={() => setBreakfastPaid(false)}
+                      />
+                      <label htmlFor="noBreakfastPaid" className="ml-3">
+                        No
+                      </label>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+            <h2 className="text-2xl font-bold mb-3">Description</h2>
+            <ReactQuill
+              value={value}
+              formats={formats}
+              onChange={(newValue) => setValue(newValue)}
+              className="h-[60vh] mb-10"
+            />
+            <div className="flex items-center gap-4 justify-between mt-10">
+              <button
+                type="button"
+                className="bg-gray-300 text-black py-2 w-full"
+                onClick={() => setPopUpState("options")}
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                onClick={updateHouseRule}
+                className="bg-slate-700 hover:bg-slate-800 text-white py-2 w-full disabled:cursor-not-allowed disabled:bg-slate-400"
+              >
+                {loading ? "saving..." : "Save"}
+              </button>
+            </div>
+          </div>
         )}
 
         {popUpState === "editRoomDetailsAndOthers" && (
-          <>
+          <div className="w-[48rem] overflow-y-scroll">
             <h2 className="text-2xl font-bold">
               What can guests use at your hotel?
             </h2>
@@ -998,6 +1081,7 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
                   <input
                     type="text"
                     className="w-full border py-2 px-3 rounded-r-md outline-none"
+                    value={roomData.roomPricePerNight}
                     placeholder=""
                     onChange={(e) =>
                       setRoomData({
@@ -1019,12 +1103,13 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
               </button>
               <button
                 type="button"
+                onClick={updateOtherRoomData}
                 className="bg-slate-700 hover:bg-slate-800 text-white py-2 w-full disabled:cursor-not-allowed disabled:bg-slate-400"
               >
-                Save
+                {loading ? "saving..." : "Save"}
               </button>
             </div>
-          </>
+          </div>
         )}
       </div>
     </div>

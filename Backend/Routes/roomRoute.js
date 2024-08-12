@@ -8,6 +8,7 @@ const {
   editRoomLocation,
   editRoomDetail,
   editHouseRule,
+  editOtherRoomDetails,
 } = require("../controllers/roomController");
 const authenticate = require("../Middleware/verifyJWT");
 
@@ -20,6 +21,15 @@ route.get("/search", authenticate, search);
 route.get("/get_company_rooms/:companyID", authenticate, getAllCompanyRooms);
 route.patch("/update_room_location/:roomID", authenticate, editRoomLocation);
 route.patch("/update_room_details/:roomID", authenticate, editRoomDetail);
-route.patch("/update_house_rule/:roomID", authenticate, editHouseRule);
+route.patch(
+  "/update_other_room_details/:roomID",
+  authenticate,
+  editOtherRoomDetails
+);
+route.patch(
+  "/update_other_room_data/:roomID",
+  authenticate,
+  editOtherRoomDetails
+);
 
 module.exports = route;

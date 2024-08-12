@@ -257,16 +257,16 @@ function RoomDetail() {
               <ul className="flex flex-wrap items-center gap-3 my-3 max-w-3xl ml-4">
                 {room.company &&
                   room.company.hotelAmenities.map((facility, index) => {
-                    return (
-                      <>
+                    if (facility.checked) {
+                      return (
                         <li
                           key={index}
                           className="bg-slate-100 py-2 px-14 rounded-md text-sm text-slate-800 font-semibold"
                         >
                           {facility.name}
                         </li>
-                      </>
-                    );
+                      );
+                    }
                   })}
               </ul>
             </section>
