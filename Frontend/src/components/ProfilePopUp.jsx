@@ -15,7 +15,7 @@ function ProfilePopUp({ user, profileRef }) {
           </Link>
           <Link
             className="hover:bg-slate-50 p-2 border-t"
-            to="/login"
+            to="/logout"
             onClick={() => navigate("/logout")}
           >
             Log Out

@@ -31,7 +31,7 @@ function Header({ user }) {
     };
   }, []);
   return (
-    <header className="flex justify-between px-5 py-3 fixed bg-black/90 backdrop-blur-sm w-full text-2xl z-50">
+    <header className="flex justify-between px-5 py-3 fixed bg-black/90 backdrop-blur-sm w-full text-2xl z-40">
       <div className="flex gap-3 items-center text-white">
         <RiMenu2Fill
           className="cursor-pointer"
@@ -39,14 +39,6 @@ function Header({ user }) {
         />
         <h2 className="font-bold text-xl">ROYAL HOMES</h2>
       </div>
-      {/* <div className="relative">
-        <input
-          type="text"
-          placeholder="Search"
-          className="w-[400px] py-2 outline-none text-white  px-5 bg-transparent border rounded-2xl text-base"
-        />
-        <FiSearch className="cursor-pointer absolute top-2 right-3 text-white" />
-      </div> */}
       <div className="relative flex items-center gap-2">
         <p className="text-white text-xl max-[430px]:hidden">
           {user && user.displayName ? user.displayName : "Anonymous"}
@@ -57,9 +49,9 @@ function Header({ user }) {
           className="w-10 h-10 rounded-full cursor-pointer"
           onClick={() => setShowProfile(true)}
         />
+        {showNav && <NavBar onClose={onClose} user={user} />}
         {showProfile && <ProfilePopUp user={user} profileRef={profileRef} />}
       </div>
-      {showNav && <NavBar onClose={onClose} user={user} />}
     </header>
   );
 }

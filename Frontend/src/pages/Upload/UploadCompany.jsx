@@ -610,7 +610,7 @@ function UploadCompany() {
     const fetchUserDetail = async () => {
       try {
         const res = await fetch(
-          "https://ray-apartment-website.onrender.com/api/user/get_user",
+          "https://ray-apartment-website.onrender.com/api/user/get",
           {
             headers: {
               "content-Type": "application/json",
@@ -703,7 +703,7 @@ function UploadCompany() {
   return (
     <>
       <Header user={userInfo} />
-      <main className="p-16 flex justify-center items-center min-h-screen">
+      <main className="p-16 max-[600px]:px-0 flex justify-center items-center min-h-screen">
         <form
           className={`p-5 shadow-md w-full ${
             currentStep > 1 ? "max-w-[700px]" : "max-w-[500px]"

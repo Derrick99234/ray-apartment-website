@@ -133,7 +133,7 @@ function RoomDetail() {
                 <HiChevronRight size={30} />
               </button>
             </div>
-            <div className="flex iitems-center justify-center my-5">
+            <div className="flex iitems-center justify-center my-5 max-[768px]:flex-wrap">
               <a
                 href="#overview"
                 className={`py-3 px-20 text-sm border-b-2 border-b-gray-100 hover:border-b-blue hover:bg-gray-100 ${
@@ -175,7 +175,7 @@ function RoomDetail() {
               <h2 className="text-2xl font-semibold mb-3">
                 Information about {room && room.company?.companyName}
               </h2>
-              <div className="flex items-start gap-14">
+              <div className="flex items-start gap-14 max-[768px]:flex-col">
                 <div className="">
                   <div
                     dangerouslySetInnerHTML={{
@@ -187,7 +187,7 @@ function RoomDetail() {
                     Book now
                   </button>
                 </div>
-                <aside className="max-w-xl">
+                <aside className="max-w-xl max-[768px]:w-full">
                   <h2 className="text-md font-semibold mb-3 uppercase">
                     {room && room.roomName} Info and Price
                   </h2>

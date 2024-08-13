@@ -281,7 +281,7 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
               onClick={() => setPopUpState("editLocation")}
             >
               <h2 className="font-semibold text-xl">Manage Location</h2>
-              <p>manage and edit your location {roomDetail?.roomName}</p>
+              <p>manage and edit your location</p>
             </div>
             <div
               className="border p-4 bg-gray-900/10 w-full cursor-pointer"
@@ -293,7 +293,10 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
                 of rooms...
               </p>
             </div>
-            <div className="border p-4 bg-gray-900/10 w-full cursor-pointer">
+            <div
+              className="border p-4 bg-gray-900/10 w-full cursor-pointer"
+              onClick={() => setPopUpState("editRoomPictures")}
+            >
               <h2 className="font-semibold text-xl">Change Room Pictures</h2>
               <p>
                 Just made some changes to your rooms? Add or remove room
@@ -352,17 +355,31 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
         )}
 
         {popUpState === "editRoomPictures" && (
-          <div className="w-[48rem] overflow-y-scroll">
+          <div className="w-full overflow-y-scroll">
+            <div className="grid grid-cols-2 gap-5">
+              {roomDetail?.roomPictures &&
+                roomDetail?.roomPictures.map((picture, index) => (
+                  <div
+                    className="flex items-center justify-center relative"
+                    key={index}
+                  >
+                    <img
+                      src={picture}
+                      alt=""
+                      className="w-full h-[200px] rounded-md"
+                    />
+                    <div className=" flex gap-2 items-center justify-center absolute inset-0 bg-black/30">
+                      <button className="bg-white text-gray-800 py-1 px-4 rounded-md">
+                        edit
+                      </button>
+                      <button className="bg-gray-800 py-1 px-4 text-white rounded-md">
+                        delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+            </div>
             <div className="flex items-center gap-4 justify-between mt-10">
-              <div className="grid grid-cols-2 gap-8">
-                <div className="flex items center justi">
-                  <img
-                    src={roomDetail?.roomPictures[0]}
-                    alt=""
-                    className="w-full h-[200px] rounded-md"
-                  />
-                </div>
-              </div>
               <button
                 type="button"
                 className="bg-gray-300 text-black py-2 w-full"
