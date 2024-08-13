@@ -38,7 +38,7 @@ function NavBar({ onClose, user }) {
                 Enlist your property
               </p>
             </li>
-            {user?.displayName && (
+            {!user?.displayName && (
               <>
                 <li>
                   <Link to="/login" className="underline text-white">

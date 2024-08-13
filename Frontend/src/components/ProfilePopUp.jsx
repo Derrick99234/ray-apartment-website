@@ -10,7 +10,10 @@ function ProfilePopUp({ user, profileRef }) {
     >
       {user && user.displayName ? (
         <>
-          <Link className="hover:bg-slate-50 p-2" to="/register">
+          <Link
+            className="hover:bg-slate-50 p-2"
+            to={`user/${user?.displayName}`}
+          >
             Profile
           </Link>
           <Link
