@@ -92,11 +92,11 @@ function Dashboard() {
     <>
       <div className="flex">
         <SideBar />
-        <main className="p-10 pl-[250px]">
+        <main className="p-10 pl-[100px] max-[420px]:pt-16">
           <DashHeader />
-          <div className="flex gap-16">
+          <div className="flex gap-16 max-[420px]:flex-col mr-2">
             <div
-              className="border-2 border-gray-900 mt-3 bg-gray-50 rounded-lg w-80 h-52 flex flex-col gap-2 justify-center items-center cursor-pointer"
+              className="border-2 border-gray-900 mt-3 bg-gray-50 rounded-lg w-80 max-[420px]:w-72 h-52 flex flex-col gap-2 justify-center items-center cursor-pointer"
               onClick={() => navigate("/create-room")}
             >
               <HiPlus className="text-[4.5rem] rounded-md font-bold" />
@@ -108,13 +108,13 @@ function Dashboard() {
                 rooms.map((room, index) => {
                   return (
                     <div
-                      className="flex gap-3 bg-black/5 rounded-lg overflow-hidden cursor-pointer my-4"
+                      className="flex gap-3 bg-black/5 rounded-lg overflow-hidden cursor-pointer my-4 max-[420px]:flex-col pr-2"
                       key={index}
                     >
                       <img
                         src="https://firebasestorage.googleapis.com/v0/b/ray-apartment.appspot.com/o/images%2Fbedroom-3475656_1280(1).jpg?alt=media&token=94ad73df-4784-4e27-8c91-f7a5361a39e0"
                         alt=""
-                        className="w-36"
+                        className="w-36 max-[420px]:w-full"
                       />
                       <div className="p-3">
                         <h3 className="font-semibold text-2xl">

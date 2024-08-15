@@ -6,11 +6,11 @@ function Profile() {
   const { userInfo } = useContext(UserContext);
   return (
     <div className="p-10">
-      <div className="flex justify-evenly gap-8">
-        <div className="flex gap-5 items-center justify-center max-w-md shadow-md p-8 flex-wrap">
+      <div className="">
+        <div className="flex gap-5 items-center justify-center shadow-md p-8 flex-wrap">
           <img
             src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
-            className="rounded-full w-36 h-36"
+            className="w-36 h-36"
             alt=""
           />
           <div className="">
@@ -18,9 +18,10 @@ function Profile() {
             <p>
               @<span>{userInfo?.username}</span> - <span>{userInfo.email}</span>
             </p>
+            <Link className="mt-4 font-medium bg-gray-800 text-white px-8 block py-2">
+              Logout
+            </Link>
           </div>
-
-          <Link className="ml-8 font-medium">Logout</Link>
         </div>
         <div className="max-w-4xl shadow-md">
           <h2>Recently viewed</h2>

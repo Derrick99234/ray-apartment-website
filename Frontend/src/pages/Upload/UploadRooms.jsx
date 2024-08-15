@@ -56,7 +56,7 @@ function UploadRooms() {
   const [amenities, setAmenities] = useState([]);
 
   useEffect(() => {
-    const getComapanyDetails = async () => {
+    const getCompanyDetails = async () => {
       try {
         const token = localStorage.getItem("token");
         if (!token || !userInfo.email) {
@@ -84,7 +84,7 @@ function UploadRooms() {
       }
     };
 
-    getComapanyDetails();
+    getCompanyDetails();
   }, [navigate, userInfo]);
 
   const [location, setLocation] = useState(company.location || "");
@@ -113,7 +113,7 @@ function UploadRooms() {
 
       <h3 className="text-xl mt-3">How many hotels are you listing</h3>
 
-      <div className="flex items-center gap-5 mt-5">
+      <div className="flex items-center gap-5 mt-5 max-[420px]:flex-col">
         <div
           className={`py-10 px-5 border border-gray-500 rounded-xl bg-slate-100 cursor-pointer ${
             oneProperty && "border-2 border-gray-800 relative"
@@ -1158,7 +1158,7 @@ function UploadRooms() {
       setShowToastMsg({
         isShown: true,
         type: "success",
-        message: "Room uccessfully uploaded",
+        message: "Room successfully uploaded",
       });
       setTimeout(() => {
         navigate("/dashboard");
@@ -1184,7 +1184,7 @@ function UploadRooms() {
       <DashHeader />
       <SideBar />
       <form
-        className="p-10 w-[768px] shadow-lg bg-white mx-auto"
+        className="p-10 max-w-[768px] w-full max-[900px]:ml-[80px] mr-3 shadow-lg bg-white mx-auto"
         onSubmit={handleSubmit}
       >
         <span className="text-slate-400 block mb-5">

@@ -68,8 +68,8 @@ function CompanyProfile() {
             <HiOutlineLocationMarker />
             {company && company.location}
           </p>
-          <div className="flex justify-between items-start gap-5 mt-6 flex-wrap max-w-[95%]">
-            <div className="p-4 bg-white shadow-lg grid grid-cols-[150px,300px] gap-4 rounded-md">
+          <div className="flex justify-center items-start gap-5 mt-6 flex-wrap max-w-[95%]">
+            <div className="p-4 bg-white grid grid-cols-[150px,300px] gap-4 rounded-md">
               <span className="font-semibold">Email:</span>
               <p className="font-sm text-gray-500">
                 {company && company.email}
@@ -85,7 +85,7 @@ function CompanyProfile() {
                 {company && company.nearByAttractions}
               </p>
             </div>
-            <div className="p-4 bg-white shadow-lg grid grid-cols-[150px,300px] gap-4 rounded-md">
+            <div className="p-4 bg-white grid grid-cols-[150px,300px] gap-4 rounded-md">
               <span className="font-semibold">Description:</span>
               <p className="font-sm text-gray-500">
                 {company && company.description}
@@ -99,7 +99,7 @@ function CompanyProfile() {
                 {company && company.checkOutTime}
               </p>
             </div>
-            <div className="p-4 bg-white shadow-lg grid grid-cols-[150px,300px] gap-4 rounded-md">
+            <div className="p-4 bg-white grid grid-cols-[150px,300px] gap-4 rounded-md flex-grow">
               <span className="font-semibold">Cancellation Policy:</span>
               <p className="font-sm text-gray-500">
                 {company && company.cancellationPolicy}
