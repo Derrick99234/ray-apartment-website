@@ -2,6 +2,7 @@ const Room = require("../Model/room.model");
 const Company = require("../Model/companies.model");
 const User = require("../Model/user.model");
 
+// create room
 const createRoom = async (req, res) => {
   const {
     location,
@@ -116,6 +117,8 @@ const createRoom = async (req, res) => {
   }
 };
 
+
+// get all rooms
 const readAllRooms = async (req, res) => {
   try {
     const room = await Room.find().populate("company");
@@ -133,6 +136,8 @@ const readAllRooms = async (req, res) => {
   }
 };
 
+
+// get room
 const getRoom = async (req, res) => {
   const { roomId } = req.params;
   try {
@@ -151,6 +156,7 @@ const getRoom = async (req, res) => {
   }
 };
 const GEOAPIFY_API_KEY = "86dd5eb3f5f44a0899e450a627f3d2e3";
+
 
 const getAddressFromCoordinates = async (lat, lon) => {
   try {
@@ -172,11 +178,13 @@ const getAddressFromCoordinates = async (lat, lon) => {
   return { formatted: "Unknown location", city: "", state: "", country: "" };
 };
 ``;
-// Mapping of known aliases
+
+
 const aliases = {
   "Federal Capital Territory": "Abuja",
 };
 
+// search for room
 const search = async (req, res) => {
   const { query } = req.query;
   console.log(query);
@@ -217,6 +225,8 @@ const search = async (req, res) => {
   }
 };
 
+// get all company rooms
+
 const getAllCompanyRooms = async (req, res) => {
   try {
     const { companyID } = req.params;
@@ -235,6 +245,8 @@ const getAllCompanyRooms = async (req, res) => {
   }
 };
 
+
+// Edit room
 const editRoomLocation = async (req, res) => {
   const roomID = req.params.roomID;
   const { location } = req.body;
@@ -265,6 +277,7 @@ const editRoomLocation = async (req, res) => {
   }
 };
 
+// edit room details
 const editRoomDetail = async (req, res) => {
   const {
     roomName,
@@ -311,7 +324,7 @@ const editRoomDetail = async (req, res) => {
     });
   }
 };
-
+// edit house rule
 const editHouseRule = async (req, res) => {
   const { roomID } = req.params;
   const { childrenAllowed, petAllowed, parking, breakfast, description } =
@@ -349,6 +362,8 @@ const editHouseRule = async (req, res) => {
   }
 };
 
+
+// edit other details
 const editOtherRoomDetails = async (req, res) => {
   const { roomID } = req.params;
 
@@ -359,7 +374,7 @@ const editOtherRoomDetails = async (req, res) => {
     if (!room) {
       return res.status(404).json({
         error: true,
-        message: "room noot found",
+        message: "room not found",
       });
     }
 
@@ -382,6 +397,52 @@ const editOtherRoomDetails = async (req, res) => {
   }
 };
 
+
+//  delete room image
+const deleteRoomImage = async(req, res) => {
+  const { imageUrl } = req.body;
+  const { roomID } = req.params;
+try {
+    // Fetch the room document by ID
+    const room = await Room.findById(roomID);
+
+    if (!room) {
+      return res.status(404).json({
+        error: true,
+        message: "Room not found",
+      });
+    }
+
+    // Check if the imageUrl exists in the roomPictures array
+    const imageIndex = room.roomPictures.indexOf(imageUrl);
+
+    if (imageIndex === -1) {
+      return res.status(404).json({
+        error: true,
+        message: "Image URL not found in room pictures",
+      });
+    }
+
+    // Remove the image URL from the roomPictures array
+    room.roomPictures.splice(imageIndex, 1); // Remove 1 item at the found index
+
+    // Save the updated room document
+    await room.save();
+
+    res.status(200).send({
+      error: false,
+      room,
+      message: "Image URL removed from the database",
+    });
+ } catch (err) {
+    return res.status(500).json({
+      error: true,
+      err,
+      message: "Internal server error",
+    });
+  }
+}
+
 module.exports = {
   createRoom,
   readAllRooms,
@@ -392,4 +453,5 @@ module.exports = {
   editRoomDetail,
   editHouseRule,
   editOtherRoomDetails,
+  deleteRoomImage
 };

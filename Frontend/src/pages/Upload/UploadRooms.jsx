@@ -1184,7 +1184,7 @@ function UploadRooms() {
       <DashHeader />
       <SideBar />
       <form
-        className="p-10 max-w-[768px] w-full max-[900px]:ml-[80px] mr-3 shadow-lg bg-white mx-auto"
+        className="p-10 max-w-[768px] w-full max-[900px]:ml-[80px] mr-3 shadow-lg bg-white ml-[250px]"
         onSubmit={handleSubmit}
       >
         <span className="text-slate-400 block mb-5">

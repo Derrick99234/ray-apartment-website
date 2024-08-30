@@ -9,6 +9,8 @@ import { GiBunkBeds } from "react-icons/gi";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 import { CompanyContext } from "../../context/companyContext";
 import { HiLightBulb } from "react-icons/hi";
+import { storage } from "../../firebaseConfig"
+import { deleteObject, ref } from "firebase/storage";
 
 /* eslint-disable react/prop-types */
 function ManageRoomPopUp({ closePopUp, roomDetail }) {
@@ -22,6 +24,34 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
     setLocation(position);
     console.log("Pinned location:", location);
   };
+
+  const deleteImage = async (imageUrl) => {
+  try {
+    // Delete the file
+  const imagePath = decodeURIComponent(imageUrl.split("/o/")[1].split("?")[0]);
+  const imageRef = ref(storage, imagePath);
+
+    const response = await deleteObject(imageRef);
+    console.log(response);
+
+    // Delete the image URL from the database
+   const res = await fetch(
+        `http://localhost:2024/api/room/delete_room_image/${roomDetail?._id}`,
+        {
+          headers: {
+            "content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          method: "DELETE",
+          body: JSON.stringify({ imageUrl }),
+        }
+      );
+
+    console.log(res);
+  } catch (error) {
+    console.error("Error deleting image:", error);
+  }
+};
 
   const [twinBedNumber, setTwinBedNumber] = useState(0);
   const [kingBedNumber, setKingBedNumber] = useState(0);
@@ -164,7 +194,7 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
 
       const data = await res.json();
       if (!data.error) {
-        console.log("Room deta updated successfully");
+        console.log("Room data updated successfully");
       } else {
         console.log("error when trying to updated location");
       }
@@ -255,7 +285,7 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
       }
 
       if (!data.error) {
-        console.log("Room deta updated successfully");
+        console.log("Room data updated successfully");
       } else {
         console.log("error when trying to updated location");
       }
@@ -310,7 +340,7 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
               <h2 className="font-semibold text-xl">
                 Manage House rule and description
               </h2>
-              <p>Now you can change room rules and desccriptions</p>
+              <p>Now you can change room rules and descriptions</p>
             </div>
             <div
               className="border p-4 bg-gray-900/10 w-full cursor-pointer"
@@ -319,7 +349,7 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
               <h2 className="font-semibold text-xl">
                 Manage other room details
               </h2>
-              <p>breakfast, parking, parking space, hotel ammenties etc.</p>
+              <p>breakfast, parking, parking space, hotel amenities etc.</p>
             </div>
           </>
         )}
@@ -372,7 +402,7 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
                       <button className="bg-white text-gray-800 py-1 px-4 rounded-md">
                         edit
                       </button>
-                      <button className="bg-gray-800 py-1 px-4 text-white rounded-md">
+                      <button className="bg-gray-800 py-1 px-4 text-white rounded-md" onClick={() => deleteImage(picture)}>
                         delete
                       </button>
                     </div>
@@ -510,7 +540,7 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
                       <p>71-81 inches wide</p>
                     </div>
                   </div>
-                  <div className="border flex justify-betwwen items-center">
+                  <div className="border flex justify-between items-center">
                     <div
                       className="p-4 hover:bg-gray-600 py-2 hover:text-white text-xl cursor-pointer"
                       onClick={() => setKingBedNumber((prev) => prev - 1)}

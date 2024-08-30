@@ -9,6 +9,7 @@ const {
   editRoomDetail,
   editHouseRule,
   editOtherRoomDetails,
+  deleteRoomImage,
 } = require("../controllers/roomController");
 const authenticate = require("../Middleware/verifyJWT");
 
@@ -31,5 +32,6 @@ route.patch(
   authenticate,
   editOtherRoomDetails
 );
+route.delete("/delete_room_image/:roomID", authenticate, deleteRoomImage);
 
 module.exports = route;

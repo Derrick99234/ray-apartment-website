@@ -92,7 +92,7 @@ function Dashboard() {
     <>
       <div className="flex">
         <SideBar />
-        <main className="p-10 pl-[100px] max-[420px]:pt-16">
+        <main className="p-10 pl-[250px] max-[420px]:pl-[100px] max-[420px]:pt-16">
           <DashHeader />
           <div className="flex gap-16 max-[420px]:flex-col mr-2">
             <div

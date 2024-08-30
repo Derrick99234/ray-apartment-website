@@ -139,7 +139,7 @@ function Login() {
               Register
             </Link>
           </p>
-          <p className="cursor-pointer">Forget Password?</p>
+          <Link className="" to={"/forgotten-password"}>Forget Password?</Link>
         </div>
       </form>
       <Toast setShowToastMsg={setShowToastMsg} showToastMsg={showToastMsg} />
