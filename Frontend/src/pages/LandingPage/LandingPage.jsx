@@ -4,7 +4,7 @@ import { CiFilter } from "react-icons/ci";
 import HotelPostCard from "../../components/HotelPostCard";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../context/userContext";
-import rroom2 from "../../assets/rroom2.jpg";
+import room2 from "../../assets/room2.jpg";
 import logo2 from "../../assets/color_horizontal.png";
 import { RoomContext } from "../../context/roomContext";
 import Toast from "../../components/ToastMessage/Toast";
@@ -132,7 +132,7 @@ function LandingPage() {
       <main className="p-10 max-[758px]:p-16 max-[430px]:pt-16 bg-gray-50 max-[430px]:p-4">
         <div
           style={{
-            background: `url(${rroom2}) no-repeat`,
+            background: `url(${room2}) no-repeat`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}

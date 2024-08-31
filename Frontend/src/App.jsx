@@ -12,6 +12,7 @@ import Logout from "./components/Logout";
 import ManageRooms from "./pages/ManageRooms/ManageRooms";
 import Profile from "./pages/Profile/Profile";
 import ForgottenPassword from "./pages/ForgottenPassword/ForgottenPassword";
+import ResetPassword from "./pages/ResetPassword/ResetPassword";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/upload/v2/:id" element={<UploadCompany />} />
         <Route path="/create-room" element={<UploadRooms />} />
         <Route path="/forgotten-password" element={<ForgottenPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route
           path="/room-detail/hotel/:hotelType/:roomId"
           element={<RoomDetail />}

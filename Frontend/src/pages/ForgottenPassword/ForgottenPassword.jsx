@@ -16,10 +16,8 @@ function ForgottenPassword() {
                 headers: {"content-Type": "application/json"},
                 body: JSON.stringify({email})
             })
-
-            const data = await response.json()
-
             setEmail("")
+            const data = await response.json()
 
             console.log(data)
         } catch(error){
