@@ -196,4 +196,55 @@ const resetPassword = async (req, res) => {
   }
 };
 
-module.exports = { register, login, forgottenPassword, resetPassword };
+const google = async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (user) {
+      const token = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN);
+      const { password: hashedPassword, ...rest } = user._doc;
+      // const expiryDate = new Date(Date.now() + 3600000);
+      res.cookie("jwt", token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
+
+      res.status(200).json({
+        error: false,
+        user: rest,
+        token,
+        message: "Login is successful",
+      });
+    } else {
+      const generatedPwd =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
+      const hashedPassword = bcryptjs.hashSync(generatedPwd, 10);
+      const user = new User({
+        username:
+          req.body.name.split(" ").join("").toLowerCase() +
+          Math.floor(Math.random() * 10000).toString(),
+        email: req.body.email,
+        password: hashedPassword,
+        profileIMG: req.body.photo,
+      });
+      const token = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN, {
+        expiresIn: "1h",
+      });
+      const { password: hashedPwd, ...rest } = user._doc;
+      // const expiryDate = new Date(Date.now() + 3600000);
+      res.cookie("jwt", token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
+
+      res.status(200).json({
+        error: false,
+        user: rest,
+        token,
+        message: "Login is successful",
+      });
+    }
+   } catch (error) {
+    return res.status(500).json({
+      error: true,
+      err: error,
+      message: "Internal server error",
+    });
+  }
+};
+
+module.exports = { register, login, forgottenPassword, resetPassword, google };
