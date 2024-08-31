@@ -122,7 +122,7 @@ const forgottenPassword = async (req, res) => {
       }
     );
 
-    const resetUrl = `http://localhost:3000/reset_password/${token}`;
+    const resetUrl = `http://localhost:3000/reset_password?email=${token}`;
 
     const emailContent = `
     <div style="font-family: Arial, sans-serif; color: #333;">
@@ -162,4 +162,38 @@ const forgottenPassword = async (req, res) => {
   }
 };
 
-module.exports = { register, login, forgottenPassword };
+const resetPassword = async (req, res) => {
+  const user = req.id;
+  const { password } = req.body;
+  try {
+    const isUser = await User.findOne({ _id: user });
+
+    if (!isUser) {
+      return res.sendStatus(401);
+    }
+
+    if (!password) {
+      return res.status(404).json({
+        error: true,
+        message: "Please provide a password",
+      });
+    }
+
+    const hashedPwd = bcryptjs.hashSync(password, 10);
+    isUser.password = hashedPwd;
+    await isUser.save();
+
+    return res.status(200).json({
+      error: false,
+      message: "Password changed successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error: true,
+      err: error,
+      message: "Internal server error",
+    });
+  }
+};
+
+module.exports = { register, login, forgottenPassword, resetPassword };
