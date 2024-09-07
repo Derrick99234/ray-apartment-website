@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { CiLock, CiUnlock } from "react-icons/ci";
 import Toast from "../../components/ToastMessage/Toast";
+import Oauth from "../../components/Oauth";
 
 function Register() {
   const navigate = useNavigate();
@@ -145,15 +146,7 @@ function Register() {
           <span>or</span>
           <hr className="bg-slate-400" />
         </div>
-        <div className="bg-white flex items-center justify-center gap-3 py-2 rounded-md w-full mb-2 cursor-pointer">
-          {/* <FaGoogle /> */}
-          <img
-            src="https://static-00.iconduck.com/assets.00/google-icon-2048x2048-pks9lbdv.png"
-            alt=""
-            className="w-6"
-          />
-          <span className="font-semibold text-lg">Google</span>
-        </div>
+        <Oauth/>
         <div className="flex justify-between items-center mt-2">
           <p>
             Already have an account?{" "}
