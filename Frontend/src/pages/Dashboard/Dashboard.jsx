@@ -92,9 +92,9 @@ function Dashboard() {
     <>
       <div className="flex">
         <SideBar />
-        <main className="p-10 pl-[250px] max-[420px]:pl-[100px] max-[420px]:pt-16">
+        <main className="ml-[250px] max-[1024px]:ml-16 pt-16">
           <DashHeader />
-          <div className="flex gap-16 max-[420px]:flex-col mr-2">
+          <div className="flex gap-16 flex-wrap mr-2">
             <div
               className="border-2 border-gray-900 mt-3 bg-gray-50 rounded-lg w-80 max-[420px]:w-72 h-52 flex flex-col gap-2 justify-center items-center cursor-pointer"
               onClick={() => navigate("/create-room")}
