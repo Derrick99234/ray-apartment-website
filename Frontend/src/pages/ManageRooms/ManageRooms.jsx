@@ -10,9 +10,11 @@ function ManageRooms() {
   const { company } = useContext(CompanyContext);
   const [manageRoomPopUp, setManageRoomPopUp] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
+  const [showUpdateOptionFor, setShowUpdateOptionFor] = useState(null); // Track which room to show options for
   const closePopUp = () => {
     setManageRoomPopUp(false);
   };
+
   useEffect(() => {
     const fetchCompanyRooms = async () => {
       try {
@@ -37,50 +39,15 @@ function ManageRooms() {
   return (
     <>
       <SideBar />
-      <main className="pl-[250px] p-5">
-        <div className="flex justify-around flex-wrap">
-          {/* <div className="relative w-[340px] bg-slate-50">
-            <img
-              src="https://preview.colorlib.com/theme/marian/assets/img/rooms/room4.jpg"
-              alt=""
-              className="h-[380px] w-full"
-            />
-            <div className="div p-4">
-              <h2 className="my-3 text-gray-700 text-2xl font-semibold">
-                Classic Double Bed
-              </h2>
-              <div className="flex justify-between">
-                <span className="font-semibold text-gray-700">
-                  90$ <sub>per night</sub>
-                </span>
-                <p className="text-gray-700">3rd March, 2024</p>
-              </div>
-            </div>
-            <FiEdit2 className="absolute top-3 right-3 bg-white p-2 rounded-full text-3xl" />
-          </div>
-          <div className="relative w-[340px] bg-slate-50">
-            <img
-              src="https://preview.colorlib.com/theme/marian/assets/img/rooms/room5.jpg"
-              alt=""
-              className="h-[380px] w-full"
-            />
-            <div className="div p-4">
-              <h2 className="my-3 text-gray-700 text-2xl font-semibold">
-                Classic Double Bed
-              </h2>
-              <div className="flex justify-between">
-                <span className="font-semibold text-gray-700">
-                  90$ <sub>per night</sub>
-                </span>
-                <p className="text-gray-700">3rd March, 2024</p>
-              </div>
-            </div>
-            <FiEdit2 className="absolute top-3 right-3 bg-white p-2 rounded-full text-3xl" />
-          </div> */}
+      <main className="p-5 ml-[250px] max-[1024px]:ml-16">
+        <div className="flex justify-around flex-wrap gap-4 max-[1340px]:flex-grow">
           {rooms &&
             rooms.map((room, index) => {
               return (
-                <div className="relative w-[340px] bg-slate-50" key={index}>
+                <div
+                  className="relative w-[340px] bg-slate-50 max-[1340px]:flex-grow"
+                  key={index}
+                >
                   <img
                     src={room.roomPictures[0]}
                     alt=""
@@ -101,9 +68,20 @@ function ManageRooms() {
                     className="absolute top-3 right-3 bg-white p-2 rounded-full text-3xl cursor-pointer"
                     onClick={() => {
                       setSelectedRoom(room);
-                      setManageRoomPopUp(true);
+                      setShowUpdateOptionFor(room._id); // Set the ID of the room to show options for
                     }}
                   />
+
+                  {showUpdateOptionFor === room._id && selectedRoom &&  !manageRoomPopUp && (
+                    <div className="bg-white shadow-md rounded-md absolute top-3 right-3 overflow-hidden">
+                      <p className="py-2 px-8 bg-blue/80 text-white font-semibold cursor-pointer" onClick={() => setManageRoomPopUp(true)}>
+                        edit
+                      </p>
+                      <p className="py-2 px-8 bg-red-500 text-white font-semibold cursor-pointer">
+                        delete
+                      </p>
+                    </div>
+                  )}
 
                   {manageRoomPopUp && selectedRoom && (
                     <ManageRoomPopUp

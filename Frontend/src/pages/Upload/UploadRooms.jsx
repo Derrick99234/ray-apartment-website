@@ -113,7 +113,7 @@ function UploadRooms() {
 
       <h3 className="text-xl mt-3">How many hotels are you listing</h3>
 
-      <div className="flex items-center gap-5 mt-5 max-[420px]:flex-col">
+      <div className="flex items-center gap-5 mt-5 max-[511px]:flex-col">
         <div
           className={`py-10 px-5 border border-gray-500 rounded-xl bg-slate-100 cursor-pointer ${
             oneProperty && "border-2 border-gray-800 relative"
@@ -219,8 +219,8 @@ function UploadRooms() {
   const step4 = (
     <>
       <h2 className="text-2xl font-bold">What can guests use at your hotel?</h2>
-      <div className="flex gap-5">
-        <div className="p-5 border mt-5 w-[652px]">
+      <div className="flex gap-5 max-[810px]:flex-col">
+        <div className="p-5 border mt-5 max-w-[652px] w-full">
           {amenities &&
             amenities.map((item, index) => (
               <div key={index} className="flex items-center">
@@ -707,7 +707,7 @@ function UploadRooms() {
         <h3 className="font-semibold mb-3">
           what beds are available in this room ?
         </h3>
-        <div className="flex justify-between">
+        <div className="flex justify-between max-[511px]:flex-col">
           <div className="flex items-center gap-3">
             <LuBedSingle className="text-4xl" />
             <div>
@@ -715,7 +715,7 @@ function UploadRooms() {
               <p>52-59 inches wide</p>
             </div>
           </div>
-          <div className="border flex justify-betwwen items-center">
+          <div className="border flex justify-between items-center">
             <div
               className="p-4 hover:bg-gray-600 py-2 hover:text-white text-xl cursor-pointer"
               onClick={() => setFullBedNumber((prev) => prev - 1)}
@@ -731,7 +731,7 @@ function UploadRooms() {
             </div>
           </div>
         </div>
-        <div className="flex justify-between mt-5">
+        <div className="flex justify-between mt-5 max-[511px]:flex-col">
           <div className="flex items-center gap-3">
             <LuBedDouble className="text-4xl" />
             <div>
@@ -739,7 +739,7 @@ function UploadRooms() {
               <p>35-51 inches wide</p>
             </div>
           </div>
-          <div className="border flex justify-betwwen items-center">
+          <div className="border flex justify-between items-center">
             <div
               className="p-4 hover:bg-gray-600 py-2 hover:text-white text-xl cursor-pointer"
               onClick={() => setTwinBedNumber((prev) => prev - 1)}
@@ -755,7 +755,7 @@ function UploadRooms() {
             </div>
           </div>
         </div>
-        <div className="flex justify-between mt-5">
+        <div className="flex justify-between mt-5 max-[511px]:flex-col">
           <div className="flex items-center gap-3">
             <LuBedDouble className="text-4xl" />
             <div>
@@ -763,7 +763,7 @@ function UploadRooms() {
               <p>60-70 inches wide</p>
             </div>
           </div>
-          <div className="border flex justify-betwwen items-center">
+          <div className="border flex justify-between items-center">
             <div
               className="p-4 hover:bg-gray-600 py-2 hover:text-white text-xl cursor-pointer"
               onClick={() => setQueenBedNumber((prev) => prev - 1)}
@@ -779,7 +779,7 @@ function UploadRooms() {
             </div>
           </div>
         </div>
-        <div className="flex justify-between mt-5">
+        <div className="flex justify-between mt-5 max-[511px]:flex-col">
           <div className="flex items-center gap-3">
             <LuBedDouble className="text-4xl" />
             <div>
@@ -787,7 +787,7 @@ function UploadRooms() {
               <p>71-81 inches wide</p>
             </div>
           </div>
-          <div className="border flex justify-betwwen items-center">
+          <div className="border flex justify-between items-center">
             <div
               className="p-4 hover:bg-gray-600 py-2 hover:text-white text-xl cursor-pointer"
               onClick={() => setKingBedNumber((prev) => prev - 1)}
@@ -818,7 +818,7 @@ function UploadRooms() {
 
         {moreOption && (
           <>
-            <div className="flex justify-between mt-5">
+            <div className="flex justify-between mt-5 max-[511px]:flex-col">
               <div className="flex items-center gap-3">
                 <GiBunkBeds className="text-4xl" />
                 <div>
@@ -826,7 +826,7 @@ function UploadRooms() {
                   <p>verifying size</p>
                 </div>
               </div>
-              <div className="border flex justify-betwwen items-center">
+              <div className="border flex justify-between items-center">
                 <div
                   className="p-4 hover:bg-gray-600 py-2 hover:text-white text-xl cursor-pointer"
                   onClick={() => setBunkBedNumber((prev) => prev - 1)}
@@ -842,7 +842,7 @@ function UploadRooms() {
                 </div>
               </div>
             </div>
-            <div className="flex justify-between mt-5">
+            <div className="flex justify-between mt-5 max-[511px]:flex-col">
               <div className="flex items-center gap-3">
                 <LuSofa className="text-4xl" />
                 <div>
@@ -850,7 +850,7 @@ function UploadRooms() {
                   <p>verifying size</p>
                 </div>
               </div>
-              <div className="border flex justify-betwwen items-center">
+              <div className="border flex justify-between items-center">
                 <div
                   className="p-4 hover:bg-gray-600 py-2 hover:text-white text-xl cursor-pointer"
                   onClick={() => setSofaBedNumber((prev) => prev - 1)}
@@ -866,7 +866,7 @@ function UploadRooms() {
                 </div>
               </div>
             </div>
-            <div className="flex justify-between mt-5">
+            <div className="flex justify-between mt-5 max-[511px]:flex-col">
               <div className="flex items-center gap-3">
                 <LuBedDouble className="text-4xl" />
                 <div>
@@ -874,7 +874,7 @@ function UploadRooms() {
                   <p>verifying size</p>
                 </div>
               </div>
-              <div className="border flex justify-betwwen items-center">
+              <div className="border flex justify-between items-center">
                 <div
                   className="p-4 hover:bg-gray-600 py-2 hover:text-white text-xl cursor-pointer"
                   onClick={() => setFutonBedNumber((prev) => prev - 1)}
@@ -1184,7 +1184,7 @@ function UploadRooms() {
       <DashHeader />
       <SideBar />
       <form
-        className="p-10 max-w-[768px] w-full max-[900px]:ml-[80px] mr-3 shadow-lg bg-white ml-[250px]"
+        className="p-10 max-w-[768px] w-full shadow-lg bg-white ml-[250px] max-[1024px]:ml-16"
         onSubmit={handleSubmit}
       >
         <span className="text-slate-400 block mb-5">

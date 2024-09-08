@@ -11,6 +11,7 @@ const authenticate = async (req, res, next) => {
     if (err)
       return res.status(403).json({
         error: true,
+        err,
         message: "Unauthorized",
       });
     req.id = decoded;

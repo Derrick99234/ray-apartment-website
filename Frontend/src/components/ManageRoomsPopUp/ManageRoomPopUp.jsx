@@ -299,7 +299,7 @@ function ManageRoomPopUp({ closePopUp, roomDetail }) {
 
   return (
     <div className="fixed inset-0 bg-black/30 flex justify-center items-center">
-      <div className="max-w-3xl bg-white p-4 flex flex-col gap-5 rounded-md relative pt-10 z-50 max-h-svh">
+      <div className="max-w-3xl bg-white p-4 flex flex-col gap-5 rounded-md relative pt-10 z-50 max-h-svh ml-20 mr-10 my-20">
         <RiCloseLine
           className="cursor-pointer absolute right-5 text-xl top-2"
           onClick={closePopUp}

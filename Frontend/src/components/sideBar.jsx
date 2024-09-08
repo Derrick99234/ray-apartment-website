@@ -59,8 +59,8 @@ function SideBar() {
 
   return (
     <aside
-      className={`w-2/12 max-[1024px]:w-20 bg-gray-900 text-white fixed top-0 bottom-0 left-0 h-screen py-6 flex justify-between flex-col ${
-        isOpen ? "max-[1024px]:w-[200px] z-[100]" : ""
+      className={`w-2/12 max-[1024px]:w-[60px] bg-gray-900 z-[1000] text-white fixed top-0 bottom-0 left-0 h-screen py-6 flex justify-between flex-col ${
+        isOpen ? "max-[1024px]:w-[200px] z-[1000]" : ""
       } transition-all duration-300 ease-in-out`}
     >
       <div className="">

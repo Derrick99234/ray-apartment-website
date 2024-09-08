@@ -11,7 +11,7 @@ function Toast({ showToastMsg, setShowToastMsg }) {
       };
       const timeOutID = setTimeout(() => {
         handleToastClose();
-      }, 3000);
+      }, 5000);
 
       return () => clearTimeout(timeOutID);
     }

@@ -1,10 +1,16 @@
 import React from 'react'
 import { HiArrowLeft } from 'react-icons/hi'
 import { Link } from 'react-router-dom'
+import Toast from '../../components/ToastMessage/Toast'
 
 function ForgottenPassword() {
     const [email, setEmail] = React.useState("")
     const [loading, setLoading] = React.useState(false)
+      const [showToastMsg, setShowToastMsg] = React.useState({
+        isShown: false,
+        type: "",
+        message: "",
+    });
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -19,7 +25,19 @@ function ForgottenPassword() {
             setEmail("")
             const data = await response.json()
 
-            console.log(data)
+            if(!data.error){
+                setShowToastMsg({
+                    isShown: true,
+                    type: "message",
+                    message: data.message,
+                });
+            } else {
+                setShowToastMsg({
+                    isShown: true,
+                    type: "error",
+                    message: data.message,
+                });
+            }
         } catch(error){
             console.log(error)
         } finally{
@@ -37,10 +55,11 @@ function ForgottenPassword() {
         <form className='max-w-md w-full border p-4' onSubmit={handleSubmit}>
             <h2 className="text-2xl font-bold mb-3">Forgot Password</h2>
             <label htmlFor="email" className="block mb-2">Please provide your email address</label>
-            <input type="email" placeholder='example@gmail.com' className="w-full py-2 border outline-none px-4" onChange={(e) => setEmail(e.target.value)} />
+            <input type="email" value={email} placeholder='example@gmail.com' className="w-full py-2 border outline-none px-4" onChange={(e) => setEmail(e.target.value)} />
             <button className="bg-gray-800 w-full py-2 text-white mt-4">{loading ? "loading...": "Send"}</button>
         </form>
     </div>
+        <Toast setShowToastMsg={setShowToastMsg} showToastMsg={showToastMsg} />
     </>
   )
 }

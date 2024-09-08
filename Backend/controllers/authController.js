@@ -10,25 +10,25 @@ const register = async (req, res) => {
   if (!username) {
     res.status(404).json({
       error: true,
-      message: "Username is required for complete registeration",
+      message: "Username is required for complete registration",
     });
   }
   if (!email) {
     res.status(404).json({
       error: true,
-      message: "Username is required for conplete registeration",
+      message: "Username is required for complete registration",
     });
   }
   if (!displayName) {
     res.status(404).json({
       error: true,
-      message: "Name is required for conplete registeration",
+      message: "Name is required for complete registration",
     });
   }
   if (!password) {
     res.status(404).json({
       error: true,
-      message: "Password is required for conplete registeration",
+      message: "Password is required for complete registration",
     });
   }
 
@@ -44,7 +44,7 @@ const register = async (req, res) => {
     res.status(200).json({
       error: false,
       user,
-      message: "Registeration successfully",
+      message: "Registration successfully",
     });
   } catch (e) {
     res.status(500).json({
@@ -87,8 +87,6 @@ const login = async (req, res) => {
 };
 
 const forgottenPassword = async (req, res) => {
-  console.log("Email:", process.env.EMAIL);
-  console.log("Password:", process.env.PASSWORD);
   try {
     const { email } = req.body;
     const user = await User.findOne({ email });
@@ -113,16 +111,12 @@ const forgottenPassword = async (req, res) => {
       },
     });
 
-    const maxAge = 60 * 15;
-    const token = jwt.sign(
-      { id: user._id },
-      process.env.ACCESS_SECRET_TOKEN,
-      {
-        expiresIn: maxAge,
-      }
-    );
+    const maxAge = 60 * 30;
+    const token = jwt.sign({ id: user._id }, process.env.ACCESS_SECRET_TOKEN, {
+      expiresIn: maxAge,
+    });
 
-    const resetUrl = `http://localhost:3000/reset_password?email=${token}`;
+    const resetUrl = `http://localhost:5173/reset-password?token=${token}&email=${email}`;
 
     const emailContent = `
     <div style="font-family: Arial, sans-serif; color: #333;">
@@ -149,7 +143,7 @@ const forgottenPassword = async (req, res) => {
     console.log("Message sent: %s", info.messageId);
     return res.status(200).json({
       error: false,
-      message: "Message sent",
+      message: "Check your mail for a password reset link.",
       info: info.messageId,
     });
   } catch (error) {
@@ -163,10 +157,10 @@ const forgottenPassword = async (req, res) => {
 };
 
 const resetPassword = async (req, res) => {
-  const user = req.id;
+  const { id } = req.id;
   const { password } = req.body;
   try {
-    const isUser = await User.findOne({ _id: user });
+    const isUser = await User.findOne({ _id: id });
 
     if (!isUser) {
       return res.sendStatus(401);
